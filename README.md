@@ -163,10 +163,3 @@ Create your feature branch (git checkout -b feature/my-feature)
 Commit your changes
 
 Push to the branch and open a PR
-
-🧑‍💻 Authors
-Bani Mehdi
-Hei Brahmi
-Hidaya Hanafi
-Syrine Wannes
-Ahmed Bettaieb
