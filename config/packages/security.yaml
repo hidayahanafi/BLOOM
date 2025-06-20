@@ -1,0 +1,84 @@
+security:
+  password_hashers:
+    Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface: "auto"
+
+  providers:
+    app_user_provider:
+      entity:
+        class: App\Entity\User
+        property: email
+
+  firewalls:
+    dev:
+      pattern: ^/(_(profiler|wdt)|css|images|js)/
+      security: false
+
+    main:
+      lazy: true
+      provider: app_user_provider
+      custom_authenticators:
+        - App\Security\LoginFormAuthenticator
+        - App\Security\GoogleAuthenticator
+        - App\Security\GithubAuthenticator
+      logout:
+        path: logout
+        target: login
+      remember_me:
+        secret: "%kernel.secret%"
+        lifetime: 604800
+        path: /
+      access_denied_handler: App\Security\AccessDeniedHandler
+
+  access_control:
+    - { path: ^/face, roles: PUBLIC_ACCESS }
+    - { path: ^/(forgot-password|reset-password), roles: PUBLIC_ACCESS }
+    - { path: ^/connect/google, roles: PUBLIC_ACCESS }
+    - { path: ^/login/check-google, roles: PUBLIC_ACCESS }
+    - { path: ^/connect/github, roles: PUBLIC_ACCESS }
+    - { path: ^/connect/github/check, roles: PUBLIC_ACCESS }
+    - { path: ^/connect/linkedin, roles: PUBLIC_ACCESS }
+    - { path: ^/connect/linkedin/check, roles: PUBLIC_ACCESS }
+    - {
+        path: ^/(login|register|register/patient|register/doctor)$,
+        roles: PUBLIC_ACCESS,
+        allow_if: "not is_granted('IS_AUTHENTICATED_FULLY')",
+      }
+    - { path: ^/verify, roles: PUBLIC_ACCESS }
+    - { path: ^/$, roles: PUBLIC_ACCESS }
+    - { path: ^/admin, roles: ROLE_ADMIN }
+    - { path: ^/logout, roles: IS_AUTHENTICATED_FULLY }
+    - { path: ^/profile, roles: IS_AUTHENTICATED_FULLY }
+    - { path: ^/planning, roles: ROLE_DOCTOR }
+    - { path: ^/.*, roles: ROLE_VERIFIED }
+
+knpu_oauth2_client:
+  clients:
+    google:
+      type: google
+      client_id: "%env(GOOGLE_CLIENT_ID)%"
+      client_secret: "%env(GOOGLE_CLIENT_SECRET)%"
+      redirect_route: login_google_check
+      redirect_params: {}
+
+    github:
+      type: github
+      client_id: "%env(GITHUB_CLIENT_ID)%"
+      client_secret: "%env(GITHUB_CLIENT_SECRET)%"
+      redirect_route: login_github_check
+      redirect_params: {}
+
+    linkedin:
+      type: linkedin
+      client_id: "%env(LINKEDIN_CLIENT_ID)%"
+      client_secret: "%env(LINKEDIN_CLIENT_SECRET)%"
+      redirect_route: login_linkedin_check
+      redirect_params: []
+
+when@test:
+  security:
+    password_hashers:
+      Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface:
+        algorithm: auto
+        cost: 4
+        time_cost: 3
+        memory_cost: 10

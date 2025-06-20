@@ -1,0 +1,116 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Emotion Detection{% endblock %}
+
+{% block content_title %}Emotion Detection - Live Analysis{% endblock %}
+
+{% block content %}
+    <div class="container-fluid">
+        <div class="row justify-content-center">
+            <div class="col-lg-8 col-md-10">
+                <div class="card shadow-lg border-0">
+                    <div class="card-header bg-primary text-white">
+                        <h3 class="card-title mb-0">
+                            <i class="fas fa-smile-beam me-2"></i>Real-time Emotion Recognition
+                        </h3>
+                    </div>
+                    <div class="card-body text-center">
+                        <div class="video-container mb-4 position-relative">
+                            <img id="video-feed" 
+                                 src="{{ flask_video_url }}" 
+                                 alt="Live Video Feed"
+                                 class="img-fluid rounded-lg border shadow-sm"
+                                 style="max-width: 100%; height: auto;">
+                            <div id="loading-overlay" class="position-absolute top-0 start-0 w-100 h-100 d-flex justify-content-center align-items-center bg-dark bg-opacity-50">
+                                <div class="spinner-border text-primary" role="status">
+                                    <span class="visually-hidden">Loading...</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div id="emotion-display" class="p-3 bg-light rounded-pill d-inline-block shadow-sm">
+                            <h2 class="mb-0">
+                                <span class="badge bg-primary me-2"><i class="fas fa-heartbeat"></i></span>
+                                <span id="emotion-text" class="text-gradient">Analyzing...</span>
+                            </h2>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .text-gradient {
+            background: linear-gradient(45deg, #2196F3, #E91E63);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            font-weight: 600;
+        }
+        .video-container {
+            position: relative;
+            overflow: hidden;
+            border-radius: 15px;
+        }
+        .rounded-lg {
+            border-radius: 20px;
+        }
+        .card {
+            margin-top: 2rem;
+            margin-bottom: 2rem;
+        }
+    </style>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const emotionText = document.getElementById('emotion-text');
+            const loadingOverlay = document.getElementById('loading-overlay');
+            let errorCount = 0;
+
+            async function fetchEmotion() {
+                try {
+                    const response = await fetch('{{ path('emotion_detect') }}', {
+                        signal: AbortSignal.timeout(4000)
+                    });
+                    
+                    if (!response.ok) throw new Error('Server error');
+                    
+                    const data = await response.text();
+                    emotionText.textContent = data || 'Neutral';
+                    errorCount = 0;
+                    loadingOverlay.classList.add('d-none');
+                    
+                    // Add animation effect
+                    emotionText.classList.add('text-pop');
+                    setTimeout(() => emotionText.classList.remove('text-pop'), 200);
+                    
+                } catch (error) {
+                    errorCount++;
+                    console.error('Error:', error);
+                    
+                    if (errorCount > 3) {
+                        emotionText.textContent = 'Connection Issue';
+                        loadingOverlay.classList.remove('d-none');
+                    }
+                }
+            }
+
+            // Initial fetch and interval setup
+            fetchEmotion();
+            const interval = setInterval(fetchEmotion, 1000);
+
+            // Handle visibility changes
+            document.addEventListener('visibilitychange', () => {
+                if (document.hidden) clearInterval(interval);
+                else interval = setInterval(fetchEmotion, 1000);
+            });
+        });
+    </script>
+{% endblock %}

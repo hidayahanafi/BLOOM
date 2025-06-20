@@ -1,0 +1,49 @@
+{% extends 'admin/layout.html.twig' %}
+
+{% block title %}Modifier l'Objectif{% endblock %}
+
+{% block content %}
+    <h1>Modifier un Objectif</h1>
+
+    {# Affichage des messages flash (succès ou erreurs globales) #}
+    {% for message in app.flashes('success') %}
+        <div class="alert alert-success">{{ message }}</div>
+    {% endfor %}
+
+    {# Affichez les erreurs globales du formulaire #}
+    {% if form.vars.errors|length > 0 %}
+        <div class="alert alert-danger">
+            {% for error in form.vars.errors %}
+                <p>{{ error.message }}</p>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+
+    <div class="card shadow-sm p-4">
+
+    
+        {% for field in form %}
+            <div class="form-group mb-3">
+                {# Affiche l'étiquette du champ #}
+                {{ form_label(field, null, {'label_attr': {'class': 'form-label'}}) }}
+                
+                {# Affiche le champ avec un style Bootstrap #}
+                {{ form_widget(field, {'attr': {'class': 'form-control'}}) }}
+                
+                {# Affiche les erreurs spécifiques au champ #}
+                <div class="text-danger">
+                    {{ form_errors(field) }}
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+    <div class="mt-4">
+        <button class="btn btn-primary">Enregistrer les modifications</button>
+        <a href="{{ path('app_backoffice_page') }}" class="btn btn-secondary">Annuler</a>
+    </div>
+
+    {{ form_end(form) }}
+{% endblock %}

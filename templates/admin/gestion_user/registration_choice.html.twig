@@ -1,0 +1,22 @@
+{% extends 'admin/layout.html.twig' %}
+
+{% block content %}
+<div class="container mt-4">
+  <div class="card">
+    <div class="card-header">
+      <h4>Choix d'Inscription</h4>
+    </div>
+    <div class="card-body text-center">
+      <p>Veuillez choisir le type d'utilisateur à créer :</p>
+      <div class="d-flex justify-content-center gap-3">
+        <a href="{{ path('admin_create_user', {'type': 'patient'}) }}" class="btn btn-primary">
+          Inscrire un Patient
+        </a>
+        <a href="{{ path('admin_create_user', {'type': 'doctor'}) }}" class="btn btn-secondary">
+          Inscrire un Médecin
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,37 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Liste des Médicaments{% endblock %}
+
+{% block body %}
+    <h1>Liste des Médicaments</h1>
+
+    <div class="medicament-container">
+        {% for medicament in medicaments %}
+            <div class="medicament-card" 
+                {% if medicament.base64Image is defined %}
+                    style="background-image: url('{{ medicament.base64Image }}');"
+                {% else %}
+                    style="background-image: url('{{ asset(medicament.imageurl) }}');"
+                {% endif %}
+            >
+                <div class="medicament-overlay">
+                    <div class="medicament-name">{{ medicament.nom }}</div>
+                    <div class="medicament-details">
+                        <p><strong>Description:</strong> {{ medicament.description }}</p>
+                        <p><strong>Dosage:</strong> {{ medicament.dosage }} mg</p>
+                        <p><strong>Catégorie:</strong> {{ medicament.categorie }}</p>
+                        <p><strong>Quantité:</strong> {{ medicament.quantite }}</p>
+                        <p><strong>Prix:</strong> {{ medicament.prix }} €</p>
+                    </div>
+                </div>
+            </div>
+            <!-- Directly display image if needed -->
+            {% if medicament.base64Image is defined %}
+            {% else %}
+                <img src="{{ asset(medicament.imageurl) }}" alt="{{ medicament.nom }}">
+            {% endif %}
+        {% else %}
+            <p>Aucun médicament trouvé.</p>
+        {% endfor %}
+    </div>
+{% endblock %}

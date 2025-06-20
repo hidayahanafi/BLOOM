@@ -1,0 +1,24 @@
+[33m8faae65[m[33m ([m[1;36mHEAD -> [m[1;32mrestore-branch[m[33m)[m HEAD@{0}: checkout: moving from hedi to restore-branch
+[33me1198f6[m[33m ([m[1;31morigin/restore-branch[m[33m, [m[1;31morigin/hedi[m[33m, [m[1;32mhedi[m[33m)[m HEAD@{1}: checkout: moving from restore-branch to hedi
+[33m8faae65[m[33m ([m[1;36mHEAD -> [m[1;32mrestore-branch[m[33m)[m HEAD@{2}: checkout: moving from hedi to restore-branch
+[33me1198f6[m[33m ([m[1;31morigin/restore-branch[m[33m, [m[1;31morigin/hedi[m[33m, [m[1;32mhedi[m[33m)[m HEAD@{3}: checkout: moving from main to hedi
+[33m3df79ff[m[33m ([m[1;31morigin/main[m[33m, [m[1;32mmain[m[33m)[m HEAD@{4}: checkout: moving from hedi to main
+[33me1198f6[m[33m ([m[1;31morigin/restore-branch[m[33m, [m[1;31morigin/hedi[m[33m, [m[1;32mhedi[m[33m)[m HEAD@{5}: checkout: moving from restore-branch to hedi
+[33m8faae65[m[33m ([m[1;36mHEAD -> [m[1;32mrestore-branch[m[33m)[m HEAD@{6}: commit: user_auth
+[33me1198f6[m[33m ([m[1;31morigin/restore-branch[m[33m, [m[1;31morigin/hedi[m[33m, [m[1;32mhedi[m[33m)[m HEAD@{7}: checkout: moving from hedi to restore-branch
+[33me1198f6[m[33m ([m[1;31morigin/restore-branch[m[33m, [m[1;31morigin/hedi[m[33m, [m[1;32mhedi[m[33m)[m HEAD@{8}: checkout: moving from main to hedi
+[33m9e7d5d2[m HEAD@{9}: checkout: moving from hedi to main
+[33me1198f6[m[33m ([m[1;31morigin/restore-branch[m[33m, [m[1;31morigin/hedi[m[33m, [m[1;32mhedi[m[33m)[m HEAD@{10}: checkout: moving from hedi to hedi
+[33me1198f6[m[33m ([m[1;31morigin/restore-branch[m[33m, [m[1;31morigin/hedi[m[33m, [m[1;32mhedi[m[33m)[m HEAD@{11}: commit: User Auth and forget password
+[33mab987de[m[33m ([m[1;31morigin/Banichoo's-branch[m[33m)[m HEAD@{12}: checkout: moving from main to hedi
+[33m9e7d5d2[m HEAD@{13}: commit: User Auth and Forget Password
+[33m3df79ff[m[33m ([m[1;31morigin/main[m[33m, [m[1;32mmain[m[33m)[m HEAD@{14}: commit: Template
+[33mbae192f[m HEAD@{15}: pull origin main --rebase (finish): returning to refs/heads/main
+[33mbae192f[m HEAD@{16}: pull origin main --rebase (pick): template
+[33mfb1db90[m HEAD@{17}: pull origin main --rebase (pick): Add webapp packages
+[33mf0b20bb[m HEAD@{18}: pull origin main --rebase (pick): Add initial set of files
+[33mab987de[m[33m ([m[1;31morigin/Banichoo's-branch[m[33m)[m HEAD@{19}: pull origin main --rebase (start): checkout ab987decc5e89cdacd502ec6820a9809621d2f3f
+[33m273193d[m HEAD@{20}: Branch: renamed refs/heads/master to refs/heads/main
+[33m273193d[m HEAD@{22}: commit: template
+[33m8df87af[m HEAD@{23}: commit: Add webapp packages
+[33m447918f[m HEAD@{24}: commit (initial): Add initial set of files

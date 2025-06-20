@@ -1,0 +1,36 @@
+controllers:
+  resource:
+    path: ../src/Controller/
+    namespace: App\Controller
+  type: attribute
+
+connect_google:
+  path: /connect/google
+  controller: App\Controller\GestionUser\SecurityController::connectGoogle
+# profile_completion:
+#   path: /profile/completion
+#   controller: App\Controller\ProfileCompletionController::index
+
+# edit_employment:
+#   path: /edit/employment-history
+#   controller: App\Controller\ProfileEditController::editEmployment
+
+# edit_portfolio:
+#   path: /edit/portfolio
+#   controller: App\Controller\ProfileEditController::editPortfolio
+
+# edit_education:
+#   path: /edit/education
+#   controller: App\Controller\ProfileEditController::editEducation
+
+# edit_video:
+#   path: /edit/video-introduction
+#   controller: App\Controller\ProfileEditController::editVideo
+
+# edit_certifications:
+#   path: /edit/certifications
+#   controller: App\Controller\ProfileEditController::editCertifications
+
+# edit_experiences:
+#   path: /edit/other-experiences
+#   controller: App\Controller\ProfileEditController::editExperiences

@@ -1,0 +1,261 @@
+{% extends 'base.html.twig' %}
+
+
+{% block content %}
+
+<!-- templates/blog_detail.html.twig -->
+<div class="container">
+    <!-- Post Content -->
+    <article class="mb-5">
+        <h1>{{ post.titre }}</h1>
+        <div class="meta mb-3">
+            <span class="text-muted">
+                Posted by {{ post.user ? post.user.name : 'Anonymous' }} on {{ post.datePublication|date('F j, Y') }}
+            </span> 
+
+            <span class="ms-3">
+                <i class="fas fa-eye"></i> {{ post.nbreVues }} views
+                <i class="fas fa-comment ms-2"></i> {{ post.comments|length }} comments
+            </span>
+        </div>
+        {% if post.imagePost %}
+            <img src="{{ post.imagePost }}" class="img-fluid mb-4" alt="{{ post.titre }}">
+        {% endif %}
+        <div class="content">{{ post.contenu|raw }}</div>
+    </article>
+
+    <!-- Comments List -->
+    <section class="comments-section mb-5">
+        <h3 class="mb-4">Comments</h3>
+        
+        <div id="comments-container">
+            {% for comment in post.comments %}
+                {% if not comment.isBlocked and not comment.parent %}
+                    {% include 'GestionBlog/comment/_comment.html.twig' %}
+
+                {% endif %}
+            {% else %}
+                <div class="alert alert-info">No comments yet. Be the first to share your thoughts!</div>
+            {% endfor %}
+        </div>
+    </section>
+
+    <!-- Comment Form -->
+    <section class="comment-form mb-5">
+        <h4 class="mb-4">Leave a Comment</h4>
+
+        {{ form_start(form, {'attr': {'novalidate': 'novalidate', 'id': 'commentForm'}}) }}
+            <div class="mb-3">
+                {{ form_widget(form.comm_content, {
+                    'attr': {
+                        'class': 'form-control',
+                        'placeholder': 'Write your comment...',
+                        'rows': 4
+                    }
+                }) }}
+                {{ form_errors(form.comm_content, {'attr': {'class': 'text-danger'}}) }}
+            </div>
+            {{ form_widget(form._token) }}
+            <button type="submit" class="btn btn-primary">Post Comment</button>
+        {{ form_end(form) }}
+    </section>
+
+    <!-- AI Evaluation Results -->
+    <div id="aiEvaluation" class="evaluation-container mt-4" style="display: none;">
+        <div class="evaluation-header">
+            <h5 class="mb-0">AI Analysis Results</h5>
+            <i class="fas fa-robot"></i>
+        </div>
+
+        <div class="scores-container">
+            <div class="score-card positive">
+                <div class="score-icon">
+                    <i class="fas fa-smile"></i>
+                </div>
+                <div class="score-info">
+                    <span class="score-label">Positivity</span>
+                    <span class="score-value" id="positivityScore">0.00</span>
+                </div>
+            </div>
+
+            <div class="score-card toxic">
+                <div class="score-icon">
+                    <i class="fas fa-biohazard"></i>
+                </div>
+                <div class="score-info">
+                    <span class="score-label">Toxicity</span>
+                    <span class="score-value" id="toxicityScore">0.00</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="explanation-box mt-3">
+            <div class="explanation-header d-flex justify-content-between align-items-center">
+                <div class="d-flex align-items-center gap-2">
+                    <i class="fas fa-comment-dots"></i>
+                    <h6 class="mb-0">Analysis Summary</h6>
+                </div>
+                <button class="btn btn-sm btn-outline-secondary" id="toggleExplanation">
+                    Show Explanation
+                </button>
+            </div>
+            <p id="evaluationExplanation" class="explanation-text mt-2" style="display: none;"></p>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const form = document.getElementById('commentForm');
+    const evaluationContainer = document.getElementById('aiEvaluation');
+    const toggleBtn = document.getElementById('toggleExplanation');
+    const explanationText = document.getElementById('evaluationExplanation');
+
+    // Toggle explanation visibility
+    if (toggleBtn && explanationText) {
+        toggleBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            const isVisible = explanationText.style.display === 'block';
+            explanationText.style.display = isVisible ? 'none' : 'block';
+            toggleBtn.textContent = isVisible ? 'Show Explanation' : 'Hide Explanation';
+            toggleBtn.setAttribute('aria-expanded', !isVisible);
+        });
+    }
+
+    // Comment submission handling
+    if (form) {
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(form);
+            const comment = formData.get('comm_form[comm_content]');
+            const csrfToken = formData.get('comm_form[_token]');
+
+            if (!comment.trim()) {
+                alert('❌ Please enter a comment.');
+                return;
+            }
+
+            fetch("http://127.0.0.1:8002/evaluate_comment", {  
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ comment: comment })
+            })
+            .then(response => {
+                if (!response.ok) throw new Error('Evaluation failed: ' + response.status);
+                return response.json();
+            })
+            .then(data => {
+                document.getElementById("positivityScore").textContent = data.positivity.toFixed(2);
+                document.getElementById("toxicityScore").textContent = data.toxicity.toFixed(2);
+                document.getElementById("evaluationExplanation").textContent = data.explanation;
+                evaluationContainer.style.display = 'block';
+
+                if (data.toxicity <= 0.4) {
+                    const hiddenForm = document.createElement('form');
+                    hiddenForm.method = 'POST';
+                    hiddenForm.action = form.action;
+                    
+                    const inputs = form.querySelectorAll('input, textarea');
+                    inputs.forEach(input => {
+                        const clone = input.cloneNode(true);
+                        hiddenForm.appendChild(clone);
+                    });
+
+                    document.body.appendChild(hiddenForm);
+                    hiddenForm.submit();
+                } else {
+                    alert('⚠️ Your comment needs revision due to high toxicity score.');
+                    form.querySelector('textarea').focus();
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('❌ Error evaluating comment. Please try again.');
+            });
+        });
+    }
+});
+</script>
+
+<style>
+.evaluation-container {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 1.5rem;
+    border: 1px solid #dee2e6;
+}
+
+.score-card {
+    padding: 1rem;
+    border-radius: 8px;
+    background: white;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.explanation-text {
+    background-color: #fff;
+    border-radius: 4px;
+    padding: 1rem;
+    border-left: 3px solid #3498db;
+    margin-top: 1rem;
+}
+
+#toggleExplanation {
+    transition: all 0.2s ease;
+}
+
+#toggleExplanation:hover {
+    background-color: #3498db;
+    color: white;
+    border-color: #3498db;
+}
+</style>
+
+
+<!-- Styles for Pulsing Effect and Smooth UI -->
+<style>
+    .reply-btn {
+        color: #007bff;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        transition: transform 0.2s ease-in-out;
+    }
+
+    .reply-btn:hover {
+        transform: translateX(5px);
+        color: #0056b3;
+    }
+
+    .reply-btn i {
+        transition: transform 0.2s ease-in-out;
+    }
+
+    .reply-btn:hover i {
+        transform: translateX(3px);
+    }
+
+    .replies {
+    margin-left: 30px;  /* Indentation for nested replies */
+    border-left: 2px solid #ddd;  /* Border to indicate nesting */
+    padding-left: 20px;
+}
+
+.comment-form.highlight {
+    border: 2px solid #007bff;
+}
+
+
+    @keyframes pulse {
+        0% { box-shadow: 0 0 10px rgba(0, 123, 255, 0.7); }
+        100% { box-shadow: none; }
+    }
+</style>
+
+            
+    </div>
+    <!-- Blog End -->
+{% endblock %}

@@ -1,0 +1,74 @@
+{% extends '/admin/dashboard.html.twig' %}
+{% block content %}
+
+<div class="container">
+    <h1 class="my-4">
+        <a href="{{ path('app_event_add') }}" class="btn btn-primary">Ajouter un événement</a>
+    </h1>
+    
+    <form method="GET" action="{{ path('search') }}" class="mb-4">
+    <div class="input-group">
+        <input type="text" 
+               name="q"  
+               class="form-control" 
+               placeholder="Rechercher par nom" 
+               value="{{ query }}">
+        <button type="submit" class="btn btn-primary">Rechercher</button>
+    </div>
+</form>
+
+
+
+    <table class="table table-bordered table-striped">
+        <caption>Liste des événements</caption>
+        <thead class="table-dark">
+            <tr>
+                <th>Titre</th>
+                <th>Description</th>
+                <th>Lieu</th>
+                <th>Date</th>
+                <th>Heure</th>
+                <th>Type</th>
+                <th>Image</th>
+                <th>Contact</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for a in list %}
+                <tr>
+                    <td>{{ a.titre }}</td> 
+                    <td>{{ a.description }}</td>
+                    <td>{{ a.lieu }}</td>
+                    <td>{{ a.date|date('Y-m-d H:i') }}</td>
+                    <td>{{ a.heure }}</td>
+                    <td>{{ a.type }}</td>
+                    <td><img src="{{ asset('image/' ~ a.img) }}" width="100"></td>
+                    <td>{{ a.budget }}</td>
+                    <td>
+                        <a href="{{ path('edit', {'id': a.id}) }}" class="btn btn-warning btn-sm">Modifier</a>
+                        <form action="{{ path('delete', {'id': a.id}) }}" method="post" class="d-inline"> 
+                            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ a.id) }}">
+                            <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cet événement ?');">Supprimer</button>
+                            <a href="{{ path('event_participants', {'id': a.id}) }}" class="btn btn-info">Voir les participants</a>
+                        
+                        </form>
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="9" class="text-center">Aucun événement trouvé.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <div class="row mt-3">
+        <div class="col-md-3">
+            <a href="{{ path('event_statistiques') }}" class="btn btn-info w-100">
+                <i class="fas fa-chart-pie"></i> Voir les statistiques
+            </a>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

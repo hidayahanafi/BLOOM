@@ -1,0 +1,64 @@
+{% extends 'admin/layout.html.twig' %}
+
+{% block title %}Admin Profile{% endblock %}
+
+{% block content %}
+<div class="container">
+  <div class="page-inner">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="card">
+          <div class="card-header d-flex align-items-center">
+            <h4 class="card-title">Admin Profile</h4>
+          </div>
+          <div class="card-body">
+            <div class="row">
+              <!-- Profile Image & Basic Info -->
+              <div class="col-md-4 text-center">
+                <img class="rounded-circle" width="150" src="{{ asset(app.user.profilePicture) }}" alt="Admin Profile Image">
+                <h5 class="mt-3">{{ app.user.name }}</h5>
+                <p class="text-muted">Administrator</p>
+                <a class="btn btn-primary" href="#" onclick="document.getElementById('profilePictureInput').click(); return false;">Change Photo</a>
+                <!-- Hidden file input for profile picture upload -->
+                <form id="profilePictureForm" action="{{ path('profile_picture_upload') }}" method="POST" enctype="multipart/form-data" style="display: none;">
+                    <input type="file" name="profilePicture" id="profilePictureInput" accept="image/*" onchange="changeProfilePicture()">
+                </form>
+              </div>
+              <!-- Profile Details -->
+              <div class="col-md-8">
+                <table class="table table-borderless">
+                  <tr>
+                    <th scope="row">Admin ID:</th>
+                    <td>{{ app.user.id }}</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">Name:</th>
+                    <td>{{ app.user.name }}</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">Email:</th>
+                    <td>{{ app.user.email }}</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">Phone:</th>
+                    <td>{{ app.user.phoneNumber }}</td>
+                  </tr>
+
+                </table>
+                <div class="text-end">
+                  <a href="{{ path('admin_profile_edit') }}" class="btn btn-primary">Edit Profile</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+    function changeProfilePicture() {
+        document.getElementById('profilePictureForm').submit();
+    }
+</script>
+{% endblock %}

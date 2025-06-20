@@ -1,0 +1,23 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Planning Details{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card shadow-lg p-4">
+        <h1 class="text-center mb-4">Planning Details</h1>
+
+        <ul class="list-group">
+            <li class="list-group-item"><strong>Date:</strong> {{ planning.startDate|date('Y-m-d') }}</li>
+            <li class="list-group-item"><strong>Working Hours:</strong> 
+                {{ planning.dailyStartTime|date('H:i') }} - {{ planning.dailyEndTime|date('H:i') }}
+            </li>
+            <li class="list-group-item"><strong>Doctor:</strong> {{ planning.doctor.name }}</li>
+        </ul>
+
+        <div class="text-center mt-4">
+            <a href="{{ path('planning_index') }}" class="btn btn-secondary">Back to List</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,660 @@
+{% extends 'base.html.twig' %}
+
+{% block content %}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fullcalendar@5.10.1/main.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <style>
+        #calendar {
+            margin-top: 20px;
+            max-width: 1000px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .fc-event {
+            cursor: pointer;
+            border-radius: 6px;
+            padding: 4px;
+            margin-bottom: 2px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .fc-event:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+        
+        /* Appointment styling */
+        .fc-event.appointment {
+            background-color: #4a89dc;
+            border-color: #3a70b8;
+            border-left: 4px solid #2854a3;
+            color: #ffffff;
+            font-weight: 500;
+        }
+        .fc-event.appointment:before {
+            content: "\f007";  /* Font Awesome user icon */
+            font-family: "Font Awesome 6 Free";
+            margin-right: 4px;
+            font-weight: 900;
+        }
+        
+        /* Available slot styling */
+        .fc-event.availability {
+            background-color: #a8d5ba;
+            border-color: #88c5a0;
+            border-left: 4px solid #5ca97a;
+            color: #2c6a45;
+            font-weight: 500;
+        }
+        .fc-event.availability:before {
+            content: "\f274";  /* Font Awesome calendar check icon */
+            font-family: "Font Awesome 6 Free";
+            margin-right: 4px;
+            font-weight: 900;
+        }
+        
+        /* Calendar header styling */
+        .fc-toolbar-title {
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #444;
+        }
+        
+        .fc .fc-button-primary {
+            background-color: #4a89dc;
+            border-color: #3a70b8;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .fc .fc-button-primary:hover {
+            background-color: #3a70b8;
+            border-color: #2854a3;
+        }
+        
+        /* Improved legend styling */
+        .calendar-legend {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+        .color-box {
+            width: 18px;
+            height: 18px;
+            border-radius: 4px;
+            margin-right: 10px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* Card styling */
+        .calendar-card {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+        }
+        
+        .calendar-card .card-header {
+            background: linear-gradient(135deg, #4a89dc 0%, #5ca8df 100%);
+            padding: 20px;
+            border-bottom: none;
+        }
+        
+        .calendar-card .card-body {
+            padding: 25px;
+        }
+        
+        /* Badge styling */
+        .date-badge {
+            font-size: 0.9rem;
+            padding: 8px 12px;
+            border-radius: 20px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            background-color: rgba(255, 255, 255, 0.3);
+        }
+        
+        /* Edit form styling */
+        .edit-form {
+            background-color: #f7f9fc;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 15px;
+            border: 1px solid #e1e8ed;
+        }
+        
+        .btn-save {
+            background-color: #4CAF50;
+            border-color: #45a049;
+            color: white;
+        }
+        
+        .btn-save:hover {
+            background-color: #45a049;
+            border-color: #3d8b3d;
+            color: white;
+        }
+        
+        /* Status badge styles */
+        .status-badge {
+            font-size: 0.9rem;
+            padding: 5px 10px;
+            border-radius: 30px;
+            margin-left: 10px;
+            font-weight: normal;
+        }
+        
+        /* Toast notification */
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+        }
+        
+        .toast {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .toast-success {
+            border-left: 4px solid #2ecc71;
+        }
+        
+        .toast-error {
+            border-left: 4px solid #e74c3c;
+        }
+        
+        /* Loading overlay */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+        
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #3498db;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Modal styling */
+        .appointment-modal .modal-header {
+            background: linear-gradient(135deg, #4a89dc 0%, #5ca8df 100%);
+            color: white;
+            border-bottom: none;
+        }
+        
+        .appointment-modal .modal-content {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        
+        .appointment-detail {
+            padding: 10px 0;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex;
+        }
+        
+        .appointment-detail:last-child {
+            border-bottom: none;
+        }
+        
+        .detail-label {
+            font-weight: bold;
+            color: #555;
+            width: 30%;
+        }
+        
+        .detail-value {
+            width: 70%;
+        }
+    </style>
+
+    <!-- Make sure to include popper.js before bootstrap -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.10.1/main.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/js/all.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var calendarEl = document.getElementById('calendar');
+            var bootstrap = window.bootstrap;
+            var currentModal = null;
+            
+            // Loading overlay function
+            function showLoading() {
+                const overlay = document.createElement('div');
+                overlay.className = 'loading-overlay';
+                overlay.id = 'loadingOverlay';
+                
+                const spinner = document.createElement('div');
+                spinner.className = 'loading-spinner';
+                
+                overlay.appendChild(spinner);
+                document.body.appendChild(overlay);
+            }
+            
+            function hideLoading() {
+                const overlay = document.getElementById('loadingOverlay');
+                if (overlay) {
+                    overlay.remove();
+                }
+            }
+            
+            // Toast notification function
+            function showToast(message, type = 'success') {
+                // Create toast container if it doesn't exist
+                let toastContainer = document.querySelector('.toast-container');
+                if (!toastContainer) {
+                    toastContainer = document.createElement('div');
+                    toastContainer.className = 'toast-container';
+                    document.body.appendChild(toastContainer);
+                }
+                
+                // Create toast element
+                const toastId = 'toast-' + Date.now();
+                const toastHtml = `
+                    <div class="toast toast-${type}" id="${toastId}" role="alert" aria-live="assertive" aria-atomic="true">
+                        <div class="toast-header">
+                            <strong class="me-auto">${type === 'success' ? 'Success' : 'Error'}</strong>
+                            <small>Now</small>
+                            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                        </div>
+                        <div class="toast-body">
+                            ${message}
+                        </div>
+                    </div>
+                `;
+                
+                toastContainer.insertAdjacentHTML('beforeend', toastHtml);
+                const toastElement = document.getElementById(toastId);
+                const toast = new bootstrap.Toast(toastElement, { delay: 5000 });
+                toast.show();
+                
+                // Remove toast after it's hidden
+                toastElement.addEventListener('hidden.bs.toast', function () {
+                    toastElement.remove();
+                });
+            }
+            
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'timeGridWeek',
+                headerToolbar: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'dayGridMonth,timeGridWeek,timeGridDay'
+                },
+                slotMinTime: '08:00:00',
+                slotMaxTime: '20:00:00',
+                expandRows: true,
+                nowIndicator: true,
+                height: 'auto',
+                navLinks: true,
+                editable: false,
+                dayMaxEvents: true,
+                
+                events: function(info, successCallback, failureCallback) {
+                    fetch('{{ path('doctor_calendar_events') }}')
+                        .then(response => response.json())
+                        .then(data => {
+                            const formattedEvents = data.map(event => {
+                                if (event.extendedProps && event.extendedProps.appointmentId) {
+                                    return {
+                                        ...event,
+                                        classNames: ['appointment'],
+                                        title: `👤 ${event.title || 'Appointment'}`,
+                                        description: `Patient: ${event.extendedProps.patientName || 'Unknown'}`
+                                    };
+                                } else if (event.rendering === 'background') {
+                                    return {
+                                        ...event,
+                                        classNames: ['availability'],
+                                        title: `✓ ${event.title || 'Available'}`
+                                    };
+                                } else {
+                                    return event;
+                                }
+                            });
+                            
+                            successCallback(formattedEvents);
+                        })
+                        .catch(error => {
+                            console.error('Error loading events:', error);
+                            failureCallback(error);
+                        });
+                },
+                
+                datesSet: function(info) {
+                    calendar.refetchEvents();
+                },
+                
+                eventDidMount: function(info) {
+                    if (info.event.extendedProps) {
+                        if (info.event.extendedProps.appointmentId) {
+                            const status = info.event.extendedProps.status || 'confirmed';
+                            const statusDiv = document.createElement('div');
+                            statusDiv.className = `status-indicator ${status}`;
+                            info.el.appendChild(statusDiv);
+                        }
+                        
+                        if (info.event.extendedProps.description && typeof bootstrap !== 'undefined') {
+                            var tooltip = new bootstrap.Tooltip(info.el, {
+                                title: info.event.extendedProps.description,
+                                placement: 'top',
+                                trigger: 'hover',
+                                container: 'body'
+                            });
+                        }
+                    }
+                },
+                
+                eventClick: function(info) {
+                    if (info.event.extendedProps && info.event.extendedProps.appointmentId) {
+                        var appointmentId = info.event.extendedProps.appointmentId;
+                        var patientName = info.event.extendedProps.patientName || 'Unknown';
+                        var patientEmail = info.event.extendedProps.patientEmail || 'Not available';
+                        var patientId = info.event.extendedProps.patientId || '';
+                        var startTime = info.event.start;
+                        var endTime = info.event.end || new Date(startTime.getTime() + 60*60*1000);
+                        var status = info.event.extendedProps.status || 'confirmed';
+                        
+                        // Format date and time for display and for the date/time picker inputs
+                        var formattedStart = startTime.toLocaleDateString() + ' ' + startTime.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                        var formattedEnd = endTime.toLocaleDateString() + ' ' + endTime.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                        var formattedDate = startTime.toISOString().split('T')[0];
+                        var formattedTime = startTime.toTimeString().substring(0, 5);
+                        
+                        // Status badge HTML
+                        let statusBadgeHtml = '';
+                        if (status === 'confirmed') {
+                            statusBadgeHtml = '<span class="badge bg-success status-badge">Confirmed</span>';
+                        } else if (status === 'pending') {
+                            statusBadgeHtml = '<span class="badge bg-warning text-dark status-badge">Pending</span>';
+                        } else if (status === 'cancelled') {
+                            statusBadgeHtml = '<span class="badge bg-danger status-badge">Cancelled</span>';
+                        }
+                        
+                        // Remove any existing modal
+                        var oldModal = document.getElementById('appointmentModal');
+                        if (oldModal) {
+                            oldModal.remove();
+                        }
+                        
+                        // Create a modal with the appointment details and edit form
+                        var modalHtml = `
+                            <div class="modal fade appointment-modal" id="appointmentModal" tabindex="-1" aria-labelledby="appointmentModalLabel" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="appointmentModalLabel">
+                                                <i class="fas fa-calendar-check me-2"></i>
+                                                Appointment Details ${statusBadgeHtml}
+                                            </h5>
+                                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <div id="appointmentDetails">
+                                                <div class="appointment-detail">
+                                                    <div class="detail-label"><i class="fas fa-user me-2"></i> Patient:</div>
+                                                    <div class="detail-value">${patientName}</div>
+                                                </div>
+                                                <div class="appointment-detail">
+                                                    <div class="detail-label"><i class="fas fa-envelope me-2"></i> Email:</div>
+                                                    <div class="detail-value">${patientEmail}</div>
+                                                </div>
+                                                <div class="appointment-detail">
+                                                    <div class="detail-label"><i class="fas fa-clock me-2"></i> Start:</div>
+                                                    <div class="detail-value">${formattedStart}</div>
+                                                </div>
+                                                <div class="appointment-detail">
+                                                    <div class="detail-label"><i class="fas fa-hourglass-end me-2"></i> End:</div>
+                                                    <div class="detail-value">${formattedEnd}</div>
+                                                </div>
+                                                
+                                                <button id="editAppointmentBtn" class="btn btn-outline-primary mt-3 w-100">
+                                                    <i class="fas fa-edit me-2"></i> Change Appointment Date/Time
+                                                </button>
+                                            </div>
+                                            
+                                            <div id="appointmentEditForm" class="edit-form mt-3" style="display: none;">
+                                                <h6 class="mb-3">Reschedule Appointment</h6>
+                                                <form id="rescheduleForm">
+                                                    <input type="hidden" name="appointmentId" value="${appointmentId}">
+                                                    <div class="mb-3">
+                                                        <label for="appointmentDate" class="form-label">Date</label>
+                                                        <input type="date" class="form-control flatpickr-date" id="appointmentDate" name="appointmentDate" value="${formattedDate}" required>
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label for="appointmentTime" class="form-label">Time</label>
+                                                        <input type="time" class="form-control flatpickr-time" id="appointmentTime" name="appointmentTime" value="${formattedTime}" required>
+                                                    </div>
+                                                    <div class="form-check mb-3">
+                                                        <input class="form-check-input" type="checkbox" id="notifyPatient" name="notifyPatient" checked>
+                                                        <label class="form-check-label" for="notifyPatient">
+                                                            Send email notification to patient
+                                                        </label>
+                                                    </div>
+                                                    <div class="d-flex justify-content-between">
+                                                        <button type="button" id="cancelEditBtn" class="btn btn-outline-secondary">
+                                                            <i class="fas fa-times me-2"></i> Cancel
+                                                        </button>
+                                                        <button type="submit" class="btn btn-save">
+                                                            <i class="fas fa-save me-2"></i> Save Changes
+                                                        </button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <a href="{{ path('appointment_show', {id: 'PLACEHOLDER_ID'}) }}" class="btn btn-primary view-details-btn">
+                                                <i class="fas fa-eye me-1"></i> View Details
+                                            </a>
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                                <i class="fas fa-times me-1"></i> Close
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                        
+                        // Add the modal to the page
+                        document.body.insertAdjacentHTML('beforeend', modalHtml);
+                        
+                        // Update the view details link with the correct ID
+                        const viewDetailsBtn = document.querySelector('.view-details-btn');
+                        if (viewDetailsBtn) {
+                            viewDetailsBtn.href = viewDetailsBtn.href.replace('PLACEHOLDER_ID', appointmentId);
+                        }
+                        
+                        // Show the modal using Bootstrap 5 syntax
+                        if (typeof bootstrap !== 'undefined') {
+                            currentModal = new bootstrap.Modal(document.getElementById('appointmentModal'));
+                            currentModal.show();
+                            
+                            // Initialize date/time pickers
+                            const datePicker = document.getElementById('appointmentDate');
+                            const timePicker = document.getElementById('appointmentTime');
+                            
+                            // Toggle edit mode
+                            document.getElementById('editAppointmentBtn').addEventListener('click', function() {
+                                document.getElementById('appointmentDetails').style.display = 'none';
+                                document.getElementById('appointmentEditForm').style.display = 'block';
+                            });
+                            
+                            // Cancel edit
+                            document.getElementById('cancelEditBtn').addEventListener('click', function() {
+                                document.getElementById('appointmentDetails').style.display = 'block';
+                                document.getElementById('appointmentEditForm').style.display = 'none';
+                            });
+                            
+                            // Handle form submission
+                            document.getElementById('rescheduleForm').addEventListener('submit', function(e) {
+                                e.preventDefault();
+                                
+                                const formData = new FormData(this);
+                                const appointmentId = formData.get('appointmentId');
+                                const appointmentDate = formData.get('appointmentDate');
+                                const appointmentTime = formData.get('appointmentTime');
+                                const notifyPatient = formData.get('notifyPatient') === 'on';
+                                
+                                // Validate the date and time
+                                if (!appointmentDate || !appointmentTime) {
+                                    showToast('Please select both date and time for the appointment', 'error');
+                                    return;
+                                }
+                                
+                                // Show loading overlay
+                                showLoading();
+                                
+                                // Send data to the server
+                                fetch('{{ path('appointment_reschedule') }}', {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/json',
+                                        'X-CSRF-TOKEN': '{{ csrf_token('appointment_reschedule') }}'
+                                    },
+                                    body: JSON.stringify({
+                                        appointmentId: appointmentId,
+                                        date: appointmentDate,
+                                        time: appointmentTime,
+                                        notifyPatient: notifyPatient
+                                    })
+                                })
+                                .then(response => {
+                                    if (!response.ok) {
+                                        throw new Error('Network response was not ok');
+                                    }
+                                    return response.json();
+                                })
+                                .then(data => {
+                                    // Hide loading overlay
+                                    hideLoading();
+                                    
+                                    if (data.success) {
+                                        // Show success message
+                                        showToast(data.message || 'Appointment successfully rescheduled!');
+                                        
+                                        // Close the modal
+                                        if (currentModal) {
+                                            currentModal.hide();
+                                        }
+                                        
+                                        // Refresh the calendar events
+                                        calendar.refetchEvents();
+                                    } else {
+                                        // Show error message
+                                        showToast(data.message || 'Failed to reschedule appointment', 'error');
+                                    }
+                                })
+                                .catch(error => {
+                                    // Hide loading overlay
+                                    hideLoading();
+                                    
+                                    console.error('Error:', error);
+                                    showToast('An error occurred while rescheduling the appointment', 'error');
+                                });
+                            });
+                        } else {
+                            console.error('Bootstrap JS is not loaded');
+                            alert('Appointment details: ' + patientName + ' at ' + formattedStart);
+                        }
+                    } else if (info.event.classNames && info.event.classNames.includes('availability')) {
+                        // This is an available slot, could open a booking form here
+                        // For now, just show a message
+                        alert('This time slot is available for booking.');
+                    }
+                }
+            });
+            
+            calendar.render();
+            
+            // Add global event listeners for debugging
+            window.addEventListener('error', function(e) {
+                console.error('Global error caught:', e.error || e.message);
+            });
+        });
+    </script>
+
+    <div class="container mt-4 mb-5">
+        <div class="row mb-4">
+            <div class="col-md-12">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h1 class="mb-0">Dr. {{ doctor.name }}'s Calendar</h1>
+                    <div>
+                        <span class="badge bg-info date-badge">
+                            <i class="fas fa-calendar-alt me-1"></i> {{ "now"|date('Y-m-d') }}
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card calendar-card">
+            <div class="card-header">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h4 class="mb-0 text-white">Appointments Calendar</h4>
+                    <div>
+                        <span class="badge date-badge">
+                            <i class="fas fa-user me-1"></i> {{ app.user.name }}
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <div class="calendar-legend">
+                            <h5 class="mb-3">Legend</h5>
+                            <div class="legend-item">
+                                <div class="color-box" style="background-color: #4a89dc;"></div>
+                                <span>Patient Appointments</span>
+                            </div>
+                            <div class="legend-item">
+                                <div class="color-box" style="background-color: #a8d5ba;"></div>
+                                <span>Available Time Slots</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 text-end">
+                        <a href="{{ path('planning_index') }}" class="btn btn-outline-primary">
+                            <i class="fas fa-cog me-1"></i> Manage Plannings
+                        </a>
+                        <a href="{{ path('doctor_appointments') }}" class="btn btn-outline-secondary ms-2">
+                            <i class="fas fa-list me-1"></i> List View
+                        </a>
+                    </div>
+                </div>
+                
+                <div id="calendar"></div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

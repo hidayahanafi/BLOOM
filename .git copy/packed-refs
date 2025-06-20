@@ -1,0 +1,10 @@
+# pack-refs with: peeled fully-peeled sorted 
+e1198f67bbe37697ee41aa3a6c9d1a134dfc9099 refs/heads/hedi
+9e7d5d25c13c9f100f594e535d1624df5ec84046 refs/heads/main
+ab987decc5e89cdacd502ec6820a9809621d2f3f refs/remotes/origin/Banichoo's-branch
+b54c9889c3e153e66a379a735fefe45bbe3fad4b refs/remotes/origin/ahmedbtt's-branch
+d358dc91f2ab5d7697227915d0080d03becfc262 refs/remotes/origin/ahmedk's-branch
+ab987decc5e89cdacd502ec6820a9809621d2f3f refs/remotes/origin/hedi
+0a3d5b497cdf7d892694ce8be115027022afe0a1 refs/remotes/origin/hidaya
+0a3d5b497cdf7d892694ce8be115027022afe0a1 refs/remotes/origin/main
+0c5e80054972ed1f560cf8b4a3edd9fc1f9ca364 refs/remotes/origin/syrine_wannes

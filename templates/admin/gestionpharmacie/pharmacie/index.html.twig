@@ -1,0 +1,67 @@
+{# templates/pharmacy/list.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block title %}Pharmacy List{% endblock %}
+
+{% block body %}
+    <h1>Pharmacy List</h1>
+    
+    <div class="pharmacy-container">
+        <div class="pharmacy-wrapper">
+            {% for pharmacie in pharmacies %}
+            <div class="pharmacy-card" data-pharmacy-id="{{ pharmacie.id }}" data-url="{{ path('listmed', { pharmacieId: pharmacie.id }) }}">
+                <!-- Contenu de la carte -->
+                    {% if pharmacie.logoBase64 %}
+                        <img src="data:image/png;base64,{{ pharmacie.logoBase64 }}" alt="{{ pharmacie.nom }} Logo" class="pharmacy-logo">
+                    {% else %}
+                        <div class="no-logo">No Logo</div>
+                    {% endif %}
+                    <div class="pharmacy-info">
+                        <h2>{{ pharmacie.nom }}</h2>
+                        <p><strong>Address:</strong> {{ pharmacie.adresse }}</p>
+                        <p><strong>Email:</strong> {{ pharmacie.email }}</p>
+                        <p><strong>Phone:</strong> {{ pharmacie.tel }}</p>
+                        <p><strong>Type:</strong> {{ pharmacie.type }}</p>
+                        <p><strong>City:</strong> {{ pharmacie.ville }}</p>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const pharmacyCards = document.querySelectorAll(".pharmacy-card");
+        
+            let selectedCard = null; // Track the currently selected card
+        
+            pharmacyCards.forEach(card => {
+                // Temporary highlight on hover
+                card.addEventListener("mouseenter", () => {
+                    if (selectedCard !== card) {
+                        card.classList.add("selected");
+                    }
+                });
+        
+                card.addEventListener("mouseleave", () => {
+                    if (selectedCard !== card) {
+                        card.classList.remove("selected");
+                    }
+                });
+        
+                // Keep the selected card highlighted on click
+                card.addEventListener("click", () => {
+                    if (selectedCard) {
+                        selectedCard.classList.remove("selected");
+                    }
+                    card.classList.add("selected");
+                    selectedCard = card;
+
+                    // Redirect to the medicament page
+                    const url = card.getAttribute("data-url");
+                    window.location.href = url;
+                });
+            });
+        });
+    </script>
+{% endblock %}

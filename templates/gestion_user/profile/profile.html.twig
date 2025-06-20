@@ -1,0 +1,381 @@
+{% extends 'base.html.twig' %}
+
+{% block head %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('assets/css/profile.css') }}">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet">
+    <!-- Include Animate.css for elegant animations -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <style>
+        /* Modern, neat styling with elegant animations */
+        .card {
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        .card-header {
+            background: rgba(255, 255, 255, 0.95);
+            border-bottom: none;
+            padding: 1.2rem 1.5rem;
+        }
+        .card-body {
+            background: rgba(255, 255, 255, 0.98);
+            padding: 1.5rem;
+        }
+        .btn {
+            border-radius: 50px;
+            font-weight: 600;
+            padding: 0.6rem 1.2rem;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+        }
+        .form-control {
+            border-radius: 4px;
+            padding: 0.75rem;
+            border: 1px solid #ced4da;
+            transition: border-color 0.3s ease;
+        }
+        .form-control:focus {
+            border-color: #5e72e4;
+            box-shadow: 0 0 5px rgba(94,114,228,0.5);
+        }
+        /* Role selection styling */
+        #role-selection {
+            margin-top: 1.5rem;
+            text-align: center;
+        }
+        #role-selection h4 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+        #role-selection button {
+            min-width: 150px;
+            margin: 0.5rem;
+        }
+        .divider {
+            border-top: 1px solid #e9ecef;
+            margin: 2rem 0;
+        }
+        .animate-delay {
+            animation-delay: 0.4s;
+        }
+        /* Verified badge styling similar to Instagram/X */
+        .verified-badge {
+            background-color: #3897f0;
+            color: #fff;
+            border-radius: 50%;
+            display: inline-block;
+            font-size: 1.2rem;
+            line-height: 1;
+            padding: 0.2rem 0.4rem;
+            vertical-align: middle;
+            margin-left: 0.5rem;
+            box-shadow: 0 0 4px rgba(0,0,0,0.2);
+            animation: popIn 0.4s ease-out;
+        }
+        @keyframes popIn {
+            0% { transform: scale(0); }
+            100% { transform: scale(1); }
+        }
+    </style>
+{% endblock %}
+
+{% block topbar %}{% endblock %}
+{% block navbar %}{% endblock %}
+
+{% block title %}User Profile{% endblock %}
+
+{% block content %}
+{# Calculate profile completion percentage #}
+{% if completionSteps is defined %}
+    {% set profileCompletion = 0 %}
+    {% for step in completionSteps %}
+        {% if step.completed %}
+            {% set profileCompletion = profileCompletion + (100 / completionSteps|length) %}
+        {% endif %}
+    {% endfor %}
+{% else %}
+    {% set profileCompletion = 0 %}
+{% endif %}
+
+<div class="main-content">
+    <!-- Header Section -->
+    <div class="header pb-8 pt-5 pt-lg-8 d-flex align-items-center" style="background-image: url('{{ app.user.coverPicture }}'); background-size: cover; background-position: center top;">
+    <span class="mask bg-gradient-default opacity-8"></span>
+    <div class="container-fluid d-flex align-items-center">
+        <div class="row">
+            <div class="col-lg-7 col-md-10">
+                <h1 class="display-2 fw-bold text-white animate__animated animate__fadeInDown">
+                    Hello, {{ app.user.name }}!
+                </h1>
+                <p class="text-white fs-4 animate__animated animate__fadeInUp">
+                    Manage your profile and account settings here.
+                </p>
+                <div class="d-flex gap-2">
+                    <!-- Edit Profile Button -->
+                    <a href="{{ path('user_profile_edit') }}" class="btn btn-info btn-lg shadow-sm animate__animated animate__fadeInUp modern-btn">
+                        <i class="fas fa-user-edit"></i> Edit Profile
+                    </a>
+                    
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Home Button (Left) -->
+    <a href="{{ path('home') }}" class="btn btn-primary btn-sm position-absolute top-0 start-0 m-3 shadow-sm modern-btn animate__animated animate__fadeInLeft">
+        <i class="fas fa-home"></i> Bloom
+    </a>
+
+    <!-- Change Cover Button (Right) -->
+    <button class="btn btn-light btn-sm position-absolute top-0 end-0 m-3 shadow-sm modern-btn animate__animated animate__fadeInRight" 
+        onclick="document.getElementById('coverPictureInput').click();">
+        <i class="fas fa-camera"></i> Change Cover
+    </button>
+
+    <!-- Hidden File Input for Cover Change -->
+    <form id="coverPictureForm" action="{{ path('profile_picture_upload') }}" method="POST" enctype="multipart/form-data" style="display: none;">
+        <input type="file" name="coverPicture" id="coverPictureInput" accept="image/*" 
+            onchange="document.getElementById('coverPictureForm').submit();">
+    </form>
+
+    
+    <form id="coverPictureForm" action="{{ path('profile_picture_upload') }}" method="POST" enctype="multipart/form-data" style="display: none;">
+        <input type="file" name="coverPicture" id="coverPictureInput" accept="image/*" 
+            onchange="document.getElementById('coverPictureForm').submit();">
+    </form>
+</div>
+
+
+    <div class="container-fluid mt--7">
+        <div class="row">
+            <!-- Left Column: Profile Picture & Completion Widget -->
+            <div class="col-xl-4 order-xl-2 mb-5 mb-xl-0">
+                <div class="card card-profile shadow modern-btn animate__animated animate__fadeInUp">
+                    <!-- Profile Picture Section -->
+                    <div class="row justify-content-center">
+                        <div class="col-lg-3 order-lg-2">
+                            <div class="card-profile-image">
+                                <div class="progress-container">
+                                    <svg class="progress-ring" width="180" height="180">
+                                        <circle class="progress-ring-bg" cx="90" cy="90" r="80"></circle>
+                                        <circle class="progress-ring-circle" cx="90" cy="90" r="80" style="stroke-dasharray: 600; stroke-dashoffset: {{ 600 - ((profileCompletion / 100) * 600) }};"></circle>
+                                    </svg>
+                                    <img src="{{ app.user.profilePicture }}" class="rounded-circle">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body pt-5 text-center">
+                        <h3 class="animate__animated animate__fadeInUp">
+                            {{ app.user.name }}
+                            {% if profileCompletion == 100 %}
+                                <span class="verified-badge" title="Profile Completed">
+                                    <i class="fas fa-check"></i>
+                                </span>
+                            {% endif %}
+                        </h3>
+                        {% if app.user.country is not empty %}
+                            <p><strong>Country:</strong> {{ app.user.country }}</p>
+                        {% endif %}
+                        <a class="btn btn-primary shadow-sm modern-btn animate__animated animate__fadeInUp" onclick="document.getElementById('profilePictureInput').click();">
+                            <i class="fas fa-camera"></i> Change Photo
+                        </a>
+                        <form id="profilePictureForm" action="{{ path('profile_picture_upload') }}" method="POST" enctype="multipart/form-data" style="display: none;">
+                            <input type="file" name="profilePicture" id="profilePictureInput" accept="image/*" onchange="document.getElementById('profilePictureForm').submit();">
+                        </form>
+                        {# Only show Register Face button if face registration does not exist #}
+                        {% if not hasFaceRegistration %}
+                        <a class="btn btn-success shadow-sm modern-btn mt-2 animate__animated animate__fadeInUp" data-bs-toggle="modal" data-bs-target="#faceRegisterModal">
+                            <i class="fas fa-user-check"></i> Register Face
+                        </a>
+                        {% endif %}
+                    </div>
+
+                    <!-- Profile Completion Widget -->
+                    <div class="card-body">
+                        <h4 class="text-center mb-4">Profile Completion</h4>
+                        {% if profileCompletion == 100 %}
+                            <div class="text-center mb-3">
+                                <span class="badge bg-success completion-badge">
+                                    Profile Completed <i class="fas fa-check"></i>
+                                </span>
+                            </div>
+                        {% else %}
+                            <div class="progress mb-3">
+                                <div class="progress-bar bg-info" role="progressbar" style="width: {{ profileCompletion }}%;" aria-valuenow="{{ profileCompletion }}" aria-valuemin="0" aria-valuemax="100">
+                                    {{ profileCompletion|round(0) }}%
+                                </div>
+                            </div>
+                            <ul class="list-group">
+                                {% for step in completionSteps %}
+                                    <li class="list-group-item d-flex justify-content-between align-items-center {% if step.completed %}list-group-item-success{% else %}list-group-item-warning{% endif %}">
+                                        <span>{{ step.name }}</span>
+                                        {% if step.completed %}
+                                            <span class="badge bg-success"><i class="fas fa-check"></i></span>
+                                        {% else %}
+                                            <a href="{{ step.url }}" class="btn btn-outline-primary btn-sm modern-btn">Complete</a>
+                                        {% endif %}
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column: Account Information -->
+            <div class="col-xl-8 order-xl-1">
+                <div class="card shadow modern-btn animate__animated animate__fadeInUp">
+                    <div class="card-header bg-white border-0">
+                        <div class="row align-items-center">
+                            <div class="col-8">
+                                <h3 class="mb-0">Account Information</h3>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <h5>Name:</h5>
+                                <p class="text-muted">{{ app.user.name }}</p>
+                            </div>
+                            <div class="col-lg-6">
+                                <h5>Email:</h5>
+                                <p class="text-muted">{{ app.user.email }}</p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <h5>Phone:</h5>
+                                {% if app.user.phoneNumber %}
+                                    <p class="text-muted">{{ app.user.phoneNumber }}</p>
+                                {% else %}
+                                    <p class="text-muted">No phone number added</p>
+                                {% endif %}
+                            </div>
+                            <div class="col-lg-6">
+                                <h5>Phone Verification Status:</h5>
+                                <p>
+                                    {% if app.user.isPhoneVerified %}
+                                        <span class="badge bg-success modern-btn">Verified</span>
+                                    {% else %}
+                                        <span class="badge bg-warning modern-btn">Not Verified</span>
+                                        <a href="{{ path('send_verification_sms') }}" class="btn btn-primary btn-sm modern-btn shadow-sm">
+                                            <i class="fas fa-phone-alt"></i> Verify Phone
+                                        </a>
+                                    {% endif %}
+                                </p>
+                            </div>
+                            <div class="col-lg-6">
+                                <h5>Email Verification Status:</h5>
+                                <p>
+                                    {% if app.user.isVerified %}
+                                        <span class="badge bg-success modern-btn">Verified</span>
+                                    {% else %}
+                                        <span class="badge bg-warning modern-btn">Not Verified</span>
+                                    {% endif %}
+                                </p>
+                            </div>
+                        </div>
+                        <hr>
+                        <h3 class="fw-bold">Profile Details</h3>
+                        <p>Your bio:</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Face Registration Modal -->
+<div class="modal fade" id="faceRegisterModal" tabindex="-1" aria-labelledby="faceRegisterModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content modern-btn">
+      <div class="modal-header">
+        <h5 class="modal-title" id="faceRegisterModalLabel">Register Your Face</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <video id="faceVideo" width="100%" autoplay class="animate__animated animate__fadeIn"></video>
+        <canvas id="faceCanvas" style="display:none;"></canvas>
+        <p id="faceError" class="text-danger"></p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary modern-btn" id="captureFaceButton">Capture</button>
+        <button type="button" class="btn btn-secondary modern-btn" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        let video = document.getElementById("faceVideo");
+        let canvas = document.getElementById("faceCanvas");
+        let captureButton = document.getElementById("captureFaceButton");
+        let faceError = document.getElementById("faceError");
+        let stream;
+
+        // When the modal is shown, start the webcam stream.
+        let faceRegisterModal = document.getElementById('faceRegisterModal');
+        faceRegisterModal.addEventListener('shown.bs.modal', function () {
+            navigator.mediaDevices.getUserMedia({ video: true })
+            .then(function(s) {
+                stream = s;
+                video.srcObject = stream;
+                video.play();
+            })
+            .catch(function(err) {
+                faceError.textContent = "Unable to access camera: " + err;
+            });
+        });
+
+        // Stop the video stream when the modal is hidden.
+        faceRegisterModal.addEventListener('hidden.bs.modal', function () {
+            if(stream) {
+                stream.getTracks().forEach(track => track.stop());
+            }
+        });
+
+        // Capture the image and send it to the Symfony endpoint.
+        captureButton.addEventListener('click', function() {
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            canvas.getContext('2d').drawImage(video, 0, 0);
+            canvas.toBlob(function(blob) {
+                let formData = new FormData();
+                formData.append("face_image", blob, "face.jpg");
+                fetch("{{ path('face_register') }}", {
+                    method: "POST",
+                    body: formData,
+                    credentials: "same-origin"
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if(data.success) {
+                        alert("Face registered successfully!");
+                        // Close the modal and hide the Register Face button.
+                        var modalEl = document.getElementById('faceRegisterModal');
+                        var modalInstance = bootstrap.Modal.getInstance(modalEl);
+                        modalInstance.hide();
+                        document.querySelector('[data-bs-target="#faceRegisterModal"]').style.display = 'none';
+                    } else {
+                        faceError.textContent = data.error;
+                    }
+                })
+                .catch(err => {
+                    faceError.textContent = "Error: " + err;
+                });
+            }, "image/jpeg");
+        });
+    });
+    </script>
+{% endblock %}

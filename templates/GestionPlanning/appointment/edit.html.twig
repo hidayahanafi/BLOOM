@@ -1,0 +1,107 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit Appointment{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card shadow-lg p-4">
+        <h1 class="mb-4">Edit Appointment</h1>
+
+        <!-- Flash Messages -->
+        {% for message in app.flashes('success') %}
+            <div class="alert alert-success">{{ message }}</div>
+        {% endfor %}
+
+        {% for message in app.flashes('error') %}
+            <div class="alert alert-danger">{{ message }}</div>
+        {% endfor %}
+
+        {{ form_start(form, { 'attr': { 'novalidate': 'novalidate' } }) }}
+
+        <!-- Appointment Date Field -->
+        <div class="form-group mb-3">
+            {{ form_label(form.appointmentDate) }}
+            {{ form_widget(form.appointmentDate, {
+                'attr': {
+                    'class': 'form-control',
+                    'value': appointment.startAt ? appointment.startAt|date('Y-m-d') : ''
+                }
+            }) }}
+            <!-- Display form errors for appointmentDate -->
+            {% if form.appointmentDate.vars.errors|length > 0 %}
+                <div class="text-danger">
+                    {% for error in form.appointmentDate.vars.errors %}
+                        <div>{{ error.message }}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- Start Time Field -->
+        <div class="form-group mb-3">
+            {{ form_label(form.startAt) }}
+            {{ form_widget(form.startAt, {
+                'attr': {
+                    'class': 'form-control',
+                    'value': appointment.startAt ? appointment.startAt|date('H:i') : ''
+                }
+            }) }}
+            <!-- Display form errors for startAt -->
+            {% if form.startAt.vars.errors|length > 0 %}
+                <div class="text-danger">
+                    {% for error in form.startAt.vars.errors %}
+                        <div>{{ error.message }}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+
+        <button class="btn btn-primary">Update Appointment</button>
+
+        {{ form_end(form) }}
+    </div>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const appointmentDateInput = document.querySelector('#{{ form.appointmentDate.vars.id }}');
+    const timeSlotSelect = document.querySelector('#{{ form.startAt.vars.id }}');
+    const planningId = {{ appointment.planning.id|json_encode|raw }};
+
+    function updateTimeSlots(dateValue) {
+        let url = '{{ path("appointment_available_times", {"planningId": "__PLANNING_ID__"}) }}';
+        url = url.replace('__PLANNING_ID__', planningId) + '?date=' + dateValue;
+
+        fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                timeSlotSelect.innerHTML = '';
+                const placeholderOption = document.createElement('option');
+                placeholderOption.value = '';
+                placeholderOption.text = 'Select a time slot';
+                timeSlotSelect.appendChild(placeholderOption);
+
+                for (const [display, time] of Object.entries(data)) {
+                    const option = document.createElement('option');
+                    option.value = time;
+                    option.text = display;
+                    timeSlotSelect.appendChild(option);
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching available time slots:', error);
+            });
+    }
+
+    appointmentDateInput.addEventListener('change', function() {
+        if (this.value) {
+            updateTimeSlots(this.value);
+        }
+    });
+
+    if (appointmentDateInput.value) {
+        updateTimeSlots(appointmentDateInput.value);
+    }
+});
+</script>
+{% endblock %}

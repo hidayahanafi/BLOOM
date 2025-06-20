@@ -1,0 +1,82 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}My Appointments{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fullcalendar@5.10.1/main.min.css">
+    <style>
+        #calendar {
+            margin-top: 20px;
+            max-width: 1000px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .fc-event {
+            cursor: pointer;
+        }
+    </style>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.10.1/main.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var calendarEl = document.getElementById('calendar');
+            
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'dayGridMonth',
+                headerToolbar: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'dayGridMonth,timeGridWeek'
+                },
+                expandRows: true,
+                navLinks: true,
+                editable: false,
+                dayMaxEvents: true,
+                events: '{{ path('appointment_events') }}',
+                eventClick: function(info) {
+                    var appointmentId = info.event.extendedProps.appointmentId;
+                    
+                    // Redirect to appointment details page
+                    window.location.href = '{{ path('appointment_index') }}/' + appointmentId;
+                }
+            });
+            
+            calendar.render();
+        });
+    </script>
+{% endblock %}
+
+{% block body %}
+    <div class="container mt-4">
+        <h1 class="text-center mb-4">My Appointments</h1>
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h4 class="mb-0">Appointment Calendar</h4>
+                    <div>
+                        <span class="badge bg-info me-2">Current Date: {{ currentDate|date('Y-m-d') }}</span>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <p>Click on an appointment to view details</p>
+                    </div>
+                    <div class="col-md-6 text-end">
+                        <a href="{{ path('appointment_choose') }}" class="btn btn-primary">Book New Appointment</a>
+                    </div>
+                </div>
+                
+                <div id="calendar"></div>
+            </div>
+            <div class="card-footer">
+                <p class="mb-0 text-muted">To reschedule or cancel an appointment, please click on the appointment and use the edit or delete options.</p>
+            </div>
+        </div>
+    </div>
+{% endblock %}

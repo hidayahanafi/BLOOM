@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Register | Your App Name</title>
+  <link rel="stylesheet" href="{{ asset('assets/css/registration.css') }}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+  <style>
+    .gradient-custom {
+      background: linear-gradient(to right, rgba(106, 17, 203, 1), rgba(37, 117, 252, 1));
+    }
+  </style>
+</head>
+<body class="vh-100 gradient-custom">
+  
+  <div class="container py-5 h-100">
+    <div class="row d-flex justify-content-center align-items-center h-100">
+      <div class="col-12 col-md-8 col-lg-6 col-xl-5">
+        <div class="card bg-dark text-white" style="border-radius: 1rem;">
+          <div class="card-body p-5 text-center">
+
+            <div class="mb-md-5 mt-md-4 pb-5">
+              <h2 class="fw-bold mb-2 text-uppercase">Register</h2>
+              <p class="text-white-50 mb-5">Please enter your details to register!</p>
+
+              {# Flash Messages #}
+              {% for label, messages in app.flashes %}
+                <div class="alert alert-{{ label }}">
+                  {% for message in messages %}
+                    <p>{{ message }}</p>
+                  {% endfor %}
+                </div>
+              {% endfor %}
+
+              {{ form_start(registrationForm, { 'attr': { 'class': 'glassmorphism-form', 'novalidate': 'novalidate' } }) }}
+
+              {# Name Field #}
+              <div class="form-floating mb-4">
+                {{ form_widget(registrationForm.name, { 'attr': { 'class': 'form-control form-control-lg', 'id': 'typeNameX' } }) }}
+                {{ form_label(registrationForm.name, 'Enter your name', { 'label_attr': { 'for': 'typeNameX' } }) }}
+              </div>
+              {% if form_errors(registrationForm.name) %}
+                <div class="form-error">
+                  {{ form_errors(registrationForm.name) }}
+                </div>
+              {% endif %}
+
+              {# Email Field #}
+              <div class="form-floating mb-4">
+                {{ form_widget(registrationForm.email, { 'attr': { 'class': 'form-control form-control-lg', 'id': 'typeEmailX' } }) }}
+                {{ form_label(registrationForm.email, 'Enter your email', { 'label_attr': { 'for': 'typeEmailX' } }) }}
+              </div>
+              {% if form_errors(registrationForm.email) %}
+                <div class="form-error">
+                  {{ form_errors(registrationForm.email) }}
+                </div>
+              {% endif %}
+
+              {# Password Field #}
+              <div class="form-floating mb-4">
+                {{ form_widget(registrationForm.plainPassword, { 'attr': { 'class': 'form-control form-control-lg', 'id': 'typePasswordX' } }) }}
+                {{ form_label(registrationForm.plainPassword, 'Enter your password', { 'label_attr': { 'for': 'typePasswordX' } }) }}
+              </div>
+              {% if form_errors(registrationForm.plainPassword) %}
+                <div class="form-error">
+                  {{ form_errors(registrationForm.plainPassword) }}
+                </div>
+              {% endif %}
+
+              {# Age Field #}
+              <div class="form-floating mb-4">
+                {{ form_widget(registrationForm.age, { 'attr': { 'class': 'form-control form-control-lg', 'id': 'typeAgeX' } }) }}
+                {{ form_label(registrationForm.age, 'Enter your age', { 'label_attr': { 'for': 'typeAgeX' } }) }}
+              </div>
+              {% if form_errors(registrationForm.age) %}
+                <div class="form-error">
+                  {{ form_errors(registrationForm.age) }}
+                </div>
+              {% endif %}
+
+              {# Phone Number Field #}
+              <div class="form-floating mb-4">
+                {{ form_widget(registrationForm.phoneNumber, { 'attr': { 'class': 'form-control form-control-lg', 'id': 'typePhoneX' } }) }}
+                {{ form_label(registrationForm.phoneNumber, 'Enter your phone number', { 'label_attr': { 'for': 'typePhoneX' } }) }}
+              </div>
+              {% if form_errors(registrationForm.phoneNumber) %}
+                <div class="form-error">
+                  {{ form_errors(registrationForm.phoneNumber) }}
+                </div>
+              {% endif %}
+
+              {# Country Field #}
+              <div class="form-floating mb-4">
+                {{ form_widget(registrationForm.country, { 'attr': { 'class': 'form-control form-control-lg', 'id': 'typeCountryX' } }) }}
+                {{ form_label(registrationForm.country, 'Enter your country', { 'label_attr': { 'for': 'typeCountryX' } }) }}
+              </div>
+              {% if form_errors(registrationForm.country) %}
+                <div class="form-error">
+                  {{ form_errors(registrationForm.country) }}
+                </div>
+              {% endif %}
+
+              {# Agree Terms Field #}
+              <div class="form-check d-flex justify-content-start mb-4">
+                {{ form_widget(registrationForm.agreeTerms, { 'attr': { 'class': 'form-check-input', 'id': 'agreeTerms' } }) }}
+                {{ form_label(registrationForm.agreeTerms, 'I agree to the terms and conditions', { 'label_attr': { 'class': 'form-check-label ms-2', 'for': 'agreeTerms' } }) }}
+              </div>
+              {% if form_errors(registrationForm.agreeTerms) %}
+                <div class="form-error">
+                  {{ form_errors(registrationForm.agreeTerms) }}
+                </div>
+              {% endif %}
+
+              {# Submit Button #}
+              <button type="submit" class="btn btn-outline-light btn-lg px-5">Register</button>
+
+              {# Login Link #}
+              <div class="mt-3">
+                <p class="mb-0">Already have an account? <a href="/login" class="text-white-50 fw-bold">Login</a></p>
+              </div>
+
+              {# Social Media Login #}
+              <div class="d-flex justify-content-center text-center mt-4 pt-1">
+                <a href="" class="text-white"><i class="fab fa-facebook-f fa-lg me-3"></i></a>
+                <a href="{{ path('connect_linkedin') }}" class="text-white"><i class="fab fa-linkedin fa-lg me-3"></i></a>
+                <a href="{{ path('connect_google') }}" class="text-white"><i class="fab fa-google fa-lg"></i></a>
+                <a href="{{ path('connect_github') }}" class="text-white"><i class="fab fa-github fa-lg mx-3"></i></a>
+              </div>
+
+              {{ form_end(registrationForm) }}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

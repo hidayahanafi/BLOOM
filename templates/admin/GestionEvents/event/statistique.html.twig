@@ -1,0 +1,48 @@
+{% extends 'admin/layout.html.twig' %}
+
+{% block title %}Statistiques des Participants{% endblock %}
+
+{% block content %}
+    <h1>Statistiques des Participants par Événement</h1>
+
+    <div class="row">
+        <div class="col-md-12 mt-5">
+            <h3>Répartition des Participants par Événement</h3>
+            <div id="piechart" style="width: 100%; height: 400px;"></div>
+        </div>
+    </div>
+
+    <a href="{{ path('list') }}" class="btn btn-secondary mt-3">
+        Retour à la liste
+    </a>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+        document.addEventListener("DOMContentLoaded", function() {
+            google.charts.load('current', {'packages':['corechart']});
+            google.charts.setOnLoadCallback(drawChart);
+
+            function drawChart() {
+                {% if statsParticipants is defined and statsParticipants is not empty %}
+                    var data = google.visualization.arrayToDataTable([
+                        ['Événement', 'Participants'],
+                        {% for stat in statsParticipants %}
+                            ['{{ stat.name|e('js') }}', {{ stat.count }}],
+                        {% endfor %}
+                    ]);
+
+                    console.log("Données envoyées au graphique :", data);
+
+                    var options = {
+                        title: 'Répartition des Participants par Événement',
+                        is3D: true
+                    };
+
+                    var chart = new google.visualization.PieChart(document.getElementById('piechart'));
+                    chart.draw(data, options);
+                {% else %}
+                    console.log("Aucune donnée disponible pour les statistiques des participants.");
+                {% endif %}
+            }
+        });
+    </script>
+{% endblock %}

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Liste des Pharmacies</title>
+    <style>
+        body { font-family: Arial, sans-serif; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { border: 1px solid #000; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+    </style>
+</head>
+<body>
+    <h1>Liste des Pharmacies</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Nom</th>
+                <th>Adresse</th>    
+                <th>Email</th>
+                <th>Téléphone</th>
+                <th>Ville</th>
+                <th>Type</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for pharmacie in pharmacies %}
+                <tr>
+                    <td>{{ pharmacie.nom }}</td>
+                    <td>{{ pharmacie.adresse }}</td>
+                    <td>{{ pharmacie.email }}</td>
+                    <td>{{ pharmacie.tel }}</td>
+                    <td>{{ pharmacie.ville }}</td>
+                    <td>{{ pharmacie.type }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

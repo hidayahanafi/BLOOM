@@ -1,0 +1,158 @@
+{% extends 'admin/layout.html.twig' %}
+
+{% block content %}
+<div class="container mt-4">
+  <div class="card">
+    <div class="card-header">
+      <h4>Créer un Médecin</h4>
+    </div>
+    <div class="card-body m-5 mt-10">
+      {{ form_start(registrationForm, { 'attr': { 'class': 'glassmorphism-form', 'novalidate': 'novalidate' } }) }}
+      
+      {# Basic User Information Form #}
+      <div class="form-group {{ form_errors(registrationForm.name) ? 'has-error' }}">
+        {{ form_label(registrationForm.name, 'Nom', {'label_attr': {'class': 'control-label'}}) }}
+        {{ form_widget(registrationForm.name, { 'attr': {'class': 'form-control'} }) }}
+        {% if form_errors(registrationForm.name) %}
+          <div class="alert alert-danger">
+            {{ form_errors(registrationForm.name) }}
+          </div>
+        {% endif %}
+      </div>
+
+      <div class="form-group {{ form_errors(registrationForm.email) ? 'has-error' }}">
+        {{ form_label(registrationForm.email, 'Email', {'label_attr': {'class': 'control-label'}}) }}
+        {{ form_widget(registrationForm.email, { 'attr': {'class': 'form-control'} }) }}
+        {% if form_errors(registrationForm.email) %}
+          <div class="alert alert-danger">
+            {{ form_errors(registrationForm.email) }}
+          </div>
+        {% endif %}
+      </div>
+
+      <div class="form-group {{ form_errors(registrationForm.plainPassword) ? 'has-error' }}">
+        {{ form_label(registrationForm.plainPassword, 'Mot de passe', {'label_attr': {'class': 'control-label'}}) }}
+        {{ form_widget(registrationForm.plainPassword, { 'attr': {'class': 'form-control'} }) }}
+        {% if form_errors(registrationForm.plainPassword) %}
+          <div class="alert alert-danger">
+            {{ form_errors(registrationForm.plainPassword) }}
+          </div>
+        {% endif %}
+      </div>
+
+      <div class="form-group {{ form_errors(registrationForm.age) ? 'has-error' }}">
+        {{ form_label(registrationForm.age, 'Âge', {'label_attr': {'class': 'control-label'}}) }}
+        {{ form_widget(registrationForm.age, { 'attr': {'class': 'form-control'} }) }}
+        {% if form_errors(registrationForm.age) %}
+          <div class="alert alert-danger">
+            {{ form_errors(registrationForm.age) }}
+          </div>
+        {% endif %}
+      </div>
+
+      <div class="form-group {{ form_errors(registrationForm.phoneNumber) ? 'has-error' }}">
+        {{ form_label(registrationForm.phoneNumber, 'Téléphone', {'label_attr': {'class': 'control-label'}}) }}
+        {{ form_widget(registrationForm.phoneNumber, { 'attr': {'class': 'form-control'} }) }}
+        {% if form_errors(registrationForm.phoneNumber) %}
+          <div class="alert alert-danger">
+            {{ form_errors(registrationForm.phoneNumber) }}
+          </div>
+        {% endif %}
+      </div>
+
+      <div class="form-group {{ form_errors(registrationForm.country) ? 'has-error' }}">
+        {{ form_label(registrationForm.country, 'Pays', {'label_attr': {'class': 'control-label'}}) }}
+        {{ form_widget(registrationForm.country, { 'attr': {'class': 'form-control'} }) }}
+        {% if form_errors(registrationForm.country) %}
+          <div class="alert alert-danger">
+            {{ form_errors(registrationForm.country) }}
+          </div>
+        {% endif %}
+      </div>
+
+      {# Doctor-Specific Fields #}
+      <div id="doctor-form" class="mt-4">
+
+        <div class="form-group mt-3">
+          {{ form_label(doctorForm.doctorType, 'Type de Médecin:', {'label_attr': {'class': 'form-label'}}) }}
+          {{ form_widget(doctorForm.doctorType, {'attr': {'class': 'form-control'}}) }}
+          <div class="text-danger">{{ form_errors(doctorForm.doctorType) }}</div>
+        </div>
+
+        <div class="form-group mt-3">
+          {{ form_label(doctorForm.specializations, 'Spécialisations:', {'label_attr': {'class': 'form-label'}}) }}
+          {% for specialization in doctorForm.specializations %}
+            <div class="form-check">
+              {{ form_widget(specialization, {'attr': {'class': 'form-check-input'}}) }}
+              <label class="form-check-label">{{ specialization.vars.label }}</label>
+            </div>
+          {% endfor %}
+          <div class="text-danger">{{ form_errors(doctorForm.specializations) }}</div>
+        </div>
+
+        <div class="form-group mt-3">
+          {{ form_label(doctorForm.experience, 'Années d\'expérience:', {'label_attr': {'class': 'form-label'}}) }}
+          {{ form_widget(doctorForm.experience, {'attr': {'class': 'form-control'}}) }}
+          <div class="text-danger">{{ form_errors(doctorForm.experience) }}</div>
+        </div>
+
+        <div class="form-group mt-3">
+          {{ form_label(doctorForm.languagesSpoken, 'Langues parlées:', {'label_attr': {'class': 'form-label'}}) }}
+          {% for language in doctorForm.languagesSpoken %}
+            <div class="form-check">
+              {{ form_widget(language, {'attr': {'class': 'form-check-input'}}) }}
+              <label class="form-check-label">{{ language.vars.label }}</label>
+            </div>
+          {% endfor %}
+          <div class="text-danger">{{ form_errors(doctorForm.languagesSpoken) }}</div>
+        </div>
+
+        <div class="form-group mt-3">
+          {{ form_label(doctorForm.therapeuticApproaches, 'Approches thérapeutiques:', {'label_attr': {'class': 'form-label'}}) }}
+          {% for approach in doctorForm.therapeuticApproaches %}
+            <div class="form-check">
+              {{ form_widget(approach, {'attr': {'class': 'form-check-input'}}) }}
+              <label class="form-check-label">{{ approach.vars.label }}</label>
+            </div>
+          {% endfor %}
+          <div class="text-danger">{{ form_errors(doctorForm.therapeuticApproaches) }}</div>
+        </div>
+
+        <div class="form-group mt-3">
+          {{ form_label(doctorForm.appointmentMethods, 'Méthodes de consultation:', {'label_attr': {'class': 'form-label'}}) }}
+          {% for method in doctorForm.appointmentMethods %}
+            <div class="form-check">
+              {{ form_widget(method, {'attr': {'class': 'form-check-input'}}) }}
+              <label class="form-check-label">{{ method.vars.label }}</label>
+            </div>
+          {% endfor %}
+          <div class="text-danger">{{ form_errors(doctorForm.appointmentMethods) }}</div>
+        </div>
+
+        <div class="form-group mt-3">
+          {{ form_label(doctorForm.diploma, 'Télécharger votre diplôme (optionnel):', {'label_attr': {'class': 'form-label'}}) }}
+          {{ form_widget(doctorForm.diploma, {'attr': {'class': 'form-control'}}) }}
+          <div class="text-danger">{{ form_errors(doctorForm.diploma) }}</div>
+        </div>
+      </div>
+
+      {# Agree Terms Field #}
+      <div class="form-group {{ form_errors(registrationForm.agreeTerms) ? 'has-error' }}">
+        {{ form_widget(registrationForm.agreeTerms, { 'attr': {'id': 'agreeTerms'} }) }}
+        {{ form_label(registrationForm.agreeTerms, 'J\'accepte les conditions', {'label_attr': {'class': 'control-label'}}) }}
+        {% if form_errors(registrationForm.agreeTerms) %}
+          <div class="alert alert-danger">
+            {{ form_errors(registrationForm.agreeTerms) }}
+          </div>
+        {% endif %}
+      </div>
+
+      {# Submit Button for Both Forms #}
+      <button type="submit" class="btn btn-primary">Créer Médecin</button>
+      
+      {{ form_end(registrationForm) }}
+      {{ form_end(doctorForm) }}
+    </div>
+  </div>
+</div>
+{% endblock %}

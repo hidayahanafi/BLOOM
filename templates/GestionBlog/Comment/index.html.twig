@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comments</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container mt-4">
+        <h1 class="mb-4">Comments</h1>
+
+        <a href="{{ path('comment_new') }}" class="btn btn-primary mb-3">Add New Comment</a>
+
+        {% if comments is not empty %}
+            <table class="table table-bordered table-striped">
+                <thead class="table-dark">
+                    <tr>
+                        <th>ID</th>
+                        <th>Author</th>
+                        <th>Content</th>
+                        <th>Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for comment in comments %}
+                        <tr>
+                            <td>{{ comment.id }}</td>
+                            <td>{{ comment.commAuteur }}</td>
+                            <td>{{ comment.commContent }}</td>
+                            <td>{{ comment.commDate|date('Y-m-d H:i:s') }}</td>
+                            <td>
+                                <a href="{{ path('comment_edit', {id: comment.id}) }}" class="btn btn-warning btn-sm">Edit</a>
+                                <form action="{{ path('comment_delete', {id: comment.id}) }}" method="post" class="d-inline">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ comment.id) }}">
+                                    <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure?')">Delete</button>
+                                </form>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <div class="alert alert-info">No comments found.</div>
+        {% endif %}
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

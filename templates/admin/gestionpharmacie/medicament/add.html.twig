@@ -1,0 +1,15 @@
+{# templates/medicament/ajouter.html.twig #}
+{% extends 'admin/layout.html.twig' %}
+
+{% block title %}Ajouter un Médicament{% endblock %}
+
+{% block content %}
+    <h1>Ajouter un Médicament</h1>
+
+    {{ form_start(formmed, { 'attr': {'novalidate': 'novalidate'} }) }}
+    {{ form_widget(formmed) }}
+    <input type="hidden" name="pharmacieId" value="{{ pharmacieId }}" />
+    {{ form_end(formmed) }}        
+
+    <a href="{{ path('listmedback', { pharmacieId: pharmacieId }) }}">Back to List</a>
+{% endblock %}

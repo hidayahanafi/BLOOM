@@ -1,0 +1,64 @@
+{% extends 'admin/layout.html.twig' %}
+
+{% block title %}{{ user.name }}'s Appointments{% endblock %}
+
+{% block content %}
+<div class="container">
+  <div class="page-inner">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="card">
+          <div class="card-header">
+            <div class="d-flex align-items-center">
+              <h4 class="card-title">{{ user.name }}'s Appointments</h4>
+              <a href="{{ path('admin_appointment_choose_planning', {'id': user.id}) }}" class="btn btn-primary btn-round ms-auto">
+                <i class="fa fa-plus"></i> Add Appointment
+                </a>
+
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="table-responsive">
+              <table class="display table table-striped table-hover">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Planning</th>
+                    <th>Date & Time</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for appointment in appointments %}
+                    <tr>
+                      <td>{{ appointment.id }}</td>
+                      <td>{{ appointment.planning ? appointment.planning.id : 'N/A' }}</td>
+                      <td>{{ appointment.startAt|date('Y-m-d H:i') }}</td>
+                      <td>
+                        <a href="{{ path('admin_appointment_edit', {'id': appointment.id}) }}" class="btn btn-sm btn-warning">
+                          <i class="fa fa-edit"></i> Edit
+                        </a>
+                        <form method="post" action="{{ path('admin_appointment_delete', {'id': appointment.id}) }}" onsubmit="return confirm('Are you sure?');" style="display:inline;">
+                          <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ appointment.id) }}">
+                          <button type="submit" class="btn btn-sm btn-danger">
+                            <i class="fa fa-times"></i> Delete
+                          </button>
+                        </form>
+                      </td>
+                    </tr>
+                  {% else %}
+                    <tr>
+                      <td colspan="4">No appointments found.</td>
+                    </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+            <a href="{{ path('admin_appointments') }}" class="btn btn-secondary">Back to Users</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

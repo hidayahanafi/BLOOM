@@ -1,0 +1,122 @@
+{% extends 'admin/layout.html.twig' %}
+
+{% block title %}Liste des Pharmacies{% endblock %}
+
+{% block content %}
+    <h1>Liste des Pharmacies</h1>
+
+    <form method="get" action="{{ path('listph') }}" class="mb-3 d-flex">
+        <input type="text" id="search-input" name="q" class="form-control me-2"
+               placeholder="Rechercher une pharmacie..."
+               value="{{ app.request.query.get('q') }}">
+    </form>
+
+<div class="row mt-3">
+    <div class="col-md-3">
+        <a href="{{ path('pharmacie_pdf') }}" class="btn btn-danger w-100">
+            <i class="fas fa-file-pdf"></i> Télécharger en PDF
+        </a>
+    </div>
+</div>
+    <!-- Tableau des pharmacies -->
+    <div id="pharmacies-container">
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>{{ knp_pagination_sortable(pharmacies, 'Nom', 'p.nom') }}</th>
+                        <th>{{ knp_pagination_sortable(pharmacies, 'Adresse', 'p.adresse') }}</th>
+                        <th>Email</th>
+                        <th>Téléphone</th>
+                        <th>{{ knp_pagination_sortable(pharmacies, 'Ville', 'p.ville') }}</th>
+                        <th>{{ knp_pagination_sortable(pharmacies, 'Type', 'p.type') }}</th>
+                        <th>Logo</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="pharmacies-list">
+                    {% for pharmacie in pharmacies %}
+                        <tr>
+                            <td>
+                                <a href="{{ path('listmedback', { pharmacieId: pharmacie.id }) }}">
+                                    {{ pharmacie.nom }}
+                                </a>
+                            </td>
+                            <td>{{ pharmacie.adresse }}</td>
+                            <td>{{ pharmacie.email }}</td>
+                            <td>{{ pharmacie.tel }}</td>
+                            <td>{{ pharmacie.ville }}</td>
+                            <td>{{ pharmacie.type }}</td>
+                            <td>
+                                {% if pharmacie.logoBase64 %}
+                                    <img src="data:image/png;base64,{{ pharmacie.logoBase64 }}" 
+                                        alt="{{ pharmacie.nom }} Logo" class="pharmacy-logo">
+                                {% else %}
+                                    <div class="no-logo">No Logo</div>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <a href="{{ path('editph', {id: pharmacie.id}) }}" class="btn btn-primary">Modifier</a>
+                                <form action="{{ path('supprimer_pharmacie', { id: pharmacie.id }) }}" 
+                                    method="POST" 
+                                    onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette pharmacie ?');" 
+                                    style="display: inline-block;">
+                                    <input type="hidden" name="_method" value="POST">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ pharmacie.id) }}">
+                                    <button type="submit" class="btn btn-danger">Supprimer</button>
+                                </form>
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="8">Aucune pharmacie trouvée</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <!-- Pagination -->
+    <div class="navigation">
+        {{ knp_pagination_render(pharmacies) }}
+    </div>
+
+    <a href="{{ path('addph') }}" class="btn btn-primary mt-3">Ajouter une Pharmacie</a>
+    <div class="row mt-3">
+        <div class="col-md-3">
+            <a href="{{ path('pharmacie_statistiques') }}" class="btn btn-info w-100">
+                <i class="fas fa-chart-pie"></i> Voir les statistiques
+            </a>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        let searchInput = document.getElementById('search-input');
+        let timeout = null;
+    
+        searchInput.addEventListener('keyup', function () {
+            clearTimeout(timeout);
+            let query = this.value;
+    
+            timeout = setTimeout(() => {
+                fetch('{{ path("listph") }}?q=' + encodeURIComponent(query), {
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                })
+                .then(response => response.text())
+                .then(html => {
+                    document.getElementById('pharmacies-list').innerHTML = html;
+                    window.history.pushState({}, '', '{{ path("listph") }}?q=' + encodeURIComponent(query));
+                })
+                .catch(error => console.error('Erreur:', error));
+            }, 300); // Délai de 300ms pour éviter les requêtes excessives
+        });
+    });
+    
+    </script>
+{% endblock %}     

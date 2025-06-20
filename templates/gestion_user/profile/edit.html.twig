@@ -1,0 +1,289 @@
+{% extends 'base.html.twig' %}
+
+{% block head %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('assets/css/profile.css') }}">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet">
+    <!-- Include Animate.css for elegant animations -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <style>
+        /* Keep the blue background intact */
+        .header {
+            position: relative;
+        }
+        /* Modern card styling */
+        .card {
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.12);
+            overflow: hidden;
+        }
+        .card-header {
+            background: rgba(255, 255, 255, 0.95);
+            border-bottom: none;
+            padding: 1.2rem 1.5rem;
+        }
+        .card-body {
+            background: #fff;
+            padding: 1.5rem;
+        }
+        /* Modern button styling */
+        .btn {
+            border-radius: 50px;
+            font-weight: 600;
+            padding: 0.6rem 1.2rem;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+        }
+        /* Input and form control enhancements */
+        .form-control {
+            border-radius: 4px;
+            padding: 0.75rem;
+            border: 1px solid #ced4da;
+            transition: border-color 0.3s ease;
+        }
+        .form-control:focus {
+            border-color: #5e72e4;
+            box-shadow: 0 0 5px rgba(94,114,228,0.5);
+        }
+        /* Role selection styling */
+        #role-selection {
+            margin-top: 1.5rem;
+            text-align: center;
+        }
+        #role-selection h4 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+        #role-selection button {
+            min-width: 150px;
+            margin: 0.5rem;
+        }
+        /* Divider */
+        .divider {
+            border-top: 1px solid #d1d1d1;
+            margin: 2rem 0;
+        }
+        /* Animate delay class */
+        .animate-delay {
+            animation-delay: 0.4s;
+        }
+    </style>
+{% endblock %}
+
+{% block topbar %}{% endblock %}
+{% block navbar %}{% endblock %}
+
+{% block title %}Edit Profile{% endblock %}
+
+{% block content %}
+<div class="main-content">
+    <div class="header pb-8 pt-5 pt-lg-8 d-flex align-items-center" style="background-image: url('{{ asset('images/profile-cover.jpg') }}'); background-size: cover; background-position: center top;">
+        <span class="mask bg-gradient-default opacity-8"></span>
+        <div class="container-fluid d-flex align-items-center">
+            <div class="row">
+                <div class="col-lg-7 col-md-10">
+                    <p class="text-white fs-4">Make changes to your account details below.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container-fluid mt--7">
+        <div class="row">
+            <div class="col-xl-8 order-xl-1">
+                <div class="card shadow animate__animated animate__fadeInUp">
+                    <div class="card-header bg-white border-0">
+                        <h3 class="mb-0">Edit Profile</h3>
+                    </div>
+                    <div class="card-body">
+                        <hr class="divider">
+
+                        {# Role selection only shows if user is verified and has no role assigned yet #}
+                        {% if app.user.isVerified and 'ROLE_DOCTOR' not in app.user.roles and 'ROLE_PATIENT' not in app.user.roles %}
+                            <div id="role-selection" class="mt-4 text-center animate__animated animate__fadeIn">
+                                <h4 class="mb-3">Choose Your Role</h4>
+                                <button class="btn btn-primary" onclick="showForm('doctor')">I am a Doctor</button>
+                                <button class="btn btn-secondary" onclick="showForm('patient')">I am a Patient</button>
+                            </div>
+
+                            <div id="doctor-form" class="mt-4 d-none animate__animated animate__fadeIn animate-delay">
+                                <h4>Join Our Staff</h4>
+                                {{ form_start(doctorForm, {'attr': {'class': 'needs-validation', 'novalidate': 'novalidate'}}) }}
+                                    <div class="form-group mt-3">
+                                        {{ form_label(doctorForm.doctorType, 'Doctor Type:', {'label_attr': {'class': 'form-label'}}) }}
+                                        {{ form_widget(doctorForm.doctorType, {'attr': {'class': 'form-control'}}) }}
+                                        <div class="text-danger">{{ form_errors(doctorForm.doctorType) }}</div>
+                                    </div>
+                                    <div class="form-group mt-3">
+                                        {{ form_label(doctorForm.specializations, 'Specializations:', {'label_attr': {'class': 'form-label'}}) }}
+                                        {% for specialization in doctorForm.specializations %}
+                                            <div class="form-check">
+                                                {{ form_widget(specialization, {'attr': {'class': 'form-check-input'}}) }}
+                                                <label class="form-check-label">{{ specialization.vars.label }}</label>
+                                            </div>
+                                        {% endfor %}
+                                        <div class="text-danger">{{ form_errors(doctorForm.specializations) }}</div>
+                                    </div>
+                                    <div class="form-group mt-3">
+                                        {{ form_label(doctorForm.experience, 'Years of Practice:', {'label_attr': {'class': 'form-label'}}) }}
+                                        {{ form_widget(doctorForm.experience, {'attr': {'class': 'form-control'}}) }}
+                                        <div class="text-danger">{{ form_errors(doctorForm.experience) }}</div>
+                                    </div>
+                                    <div class="form-group mt-3">
+                                        {{ form_label(doctorForm.languagesSpoken, 'Languages Spoken:', {'label_attr': {'class': 'form-label'}}) }}
+                                        {% for language in doctorForm.languagesSpoken %}
+                                            <div class="form-check">
+                                                {{ form_widget(language, {'attr': {'class': 'form-check-input'}}) }}
+                                                <label class="form-check-label">{{ language.vars.label }}</label>
+                                            </div>
+                                        {% endfor %}
+                                        <div class="text-danger">{{ form_errors(doctorForm.languagesSpoken) }}</div>
+                                    </div>
+                                    <div class="form-group mt-3">
+                                        {{ form_label(doctorForm.therapeuticApproaches, 'Therapeutic Approaches:', {'label_attr': {'class': 'form-label'}}) }}
+                                        {% for approach in doctorForm.therapeuticApproaches %}
+                                            <div class="form-check">
+                                                {{ form_widget(approach, {'attr': {'class': 'form-check-input'}}) }}
+                                                <label class="form-check-label">{{ approach.vars.label }}</label>
+                                            </div>
+                                        {% endfor %}
+                                        <div class="text-danger">{{ form_errors(doctorForm.therapeuticApproaches) }}</div>
+                                    </div>
+                                    <div class="form-group mt-3">
+                                        {{ form_label(doctorForm.appointmentMethods, 'Appointment Methods:', {'label_attr': {'class': 'form-label'}}) }}
+                                        {% for method in doctorForm.appointmentMethods %}
+                                            <div class="form-check">
+                                                {{ form_widget(method, {'attr': {'class': 'form-check-input'}}) }}
+                                                <label class="form-check-label">{{ method.vars.label }}</label>
+                                            </div>
+                                        {% endfor %}
+                                        <div class="text-danger">{{ form_errors(doctorForm.appointmentMethods) }}</div>
+                                    </div>
+                                    <div class="form-group mt-3">
+                                        {{ form_label(doctorForm.diploma, 'Upload Your Diploma:', {'label_attr': {'class': 'form-label'}}) }}
+                                        {{ form_widget(doctorForm.diploma, {'attr': {'class': 'form-control'}}) }}
+                                        <div class="text-danger">{{ form_errors(doctorForm.diploma) }}</div>
+                                    </div>
+                                    <button type="submit" class="btn btn-success mt-3">Register as Doctor</button>
+                                {{ form_end(doctorForm) }}
+                            </div>
+
+                            <div id="patient-form" class="mt-4 d-none animate__animated animate__fadeIn animate-delay">
+                                <h4>Help us know more about you</h4>
+                                {{ form_start(patientForm, {'attr': {'class': 'needs-validation', 'novalidate': 'novalidate'}}) }}
+                                    <div class="form-group mt-3">
+                                        {{ form_label(patientForm.relationshipStatus, 'Relationship Status:', {'label_attr': {'class': 'form-label'}}) }}
+                                        {{ form_widget(patientForm.relationshipStatus, {'attr': {'class': 'form-control'}}) }}
+                                        <div class="text-danger">{{ form_errors(patientForm.relationshipStatus) }}</div>
+                                    </div>
+                                    <div class="form-group mt-3">
+                                        {{ form_label(patientForm.religion, 'Religion:', {'label_attr': {'class': 'form-label'}}) }}
+                                        {{ form_widget(patientForm.religion, {'attr': {'class': 'form-control'}}) }}
+                                        <div class="text-danger">{{ form_errors(patientForm.religion) }}</div>
+                                    </div>
+                                    <div class="form-group mt-3">
+                                        {{ form_label(patientForm.religionImportance, 'Religion Importance:', {'label_attr': {'class': 'form-label'}}) }}
+                                        {{ form_widget(patientForm.religionImportance, {'attr': {'class': 'form-control'}}) }}
+                                        <div class="text-danger">{{ form_errors(patientForm.religionImportance) }}</div>
+                                    </div>
+                                    <div class="form-group mt-3">
+                                        {{ form_label(patientForm.therapyExperience, 'Therapy Experience:', {'label_attr': {'class': 'form-label'}}) }}
+                                        <div class="form-check">
+                                            {{ form_widget(patientForm.therapyExperience.0, {'attr': {'class': 'form-check-input'}}) }}
+                                            <label class="form-check-label">{{ patientForm.therapyExperience.0.vars.label }}</label>
+                                        </div>
+                                        <div class="form-check">
+                                            {{ form_widget(patientForm.therapyExperience.1, {'attr': {'class': 'form-check-input'}}) }}
+                                            <label class="form-check-label">{{ patientForm.therapyExperience.1.vars.label }}</label>
+                                        </div>
+                                        <div class="text-danger">{{ form_errors(patientForm.therapyExperience) }}</div>
+                                    </div>
+                                    <div class="form-group mt-3">
+                                        <label class="form-label">What led you to consider therapy today? (Select all that apply)</label>
+                                        {% for choice in patientForm.therapyReasons %}
+                                            <div class="form-check">
+                                                {{ form_widget(choice, {'attr': {'class': 'form-check-input'}}) }}
+                                                <label class="form-check-label">{{ choice.vars.label }}</label>
+                                            </div>
+                                        {% endfor %}
+                                        <div class="text-danger">{{ form_errors(patientForm.therapyReasons) }}</div>
+                                    </div>
+                                    <div class="form-group mt-3">
+                                        {{ form_label(patientForm.therapyType, 'Therapy Type:', {'label_attr': {'class': 'form-label'}}) }}
+                                        {{ form_widget(patientForm.therapyType, {'attr': {'class': 'form-control'}}) }}
+                                        <div class="text-danger">{{ form_errors(patientForm.therapyType) }}</div>
+                                    </div>
+                                    <button type="submit" class="btn btn-success mt-3">Register as Patient</button>
+                                {{ form_end(patientForm) }}
+                            </div>
+                        {% endif %}
+
+                        <hr class="divider">
+
+                        {# Basic Information Form #}
+                        <h4>Basic Information</h4>
+                        {{ form_start(form, {'attr': {'class': 'needs-validation', 'novalidate': 'novalidate'}}) }}
+                            <div class="form-group mt-3">
+                                {{ form_label(form.email, 'Email:', {'label_attr': {'class': 'form-label'}}) }}
+                                {{ form_widget(form.email, {'attr': {'class': 'form-control'}}) }}
+                                <div class="text-danger">{{ form_errors(form.email) }}</div>
+                            </div>
+                            <div class="form-group mt-3">
+                                {{ form_label(form.name, 'Name:', {'label_attr': {'class': 'form-label'}}) }}
+                                {{ form_widget(form.name, {'attr': {'class': 'form-control'}}) }}
+                                <div class="text-danger">{{ form_errors(form.name) }}</div>
+                            </div>
+                            <div class="form-group mt-3">
+                                {{ form_label(form.age, 'Age:', {'label_attr': {'class': 'form-label'}}) }}
+                                {{ form_widget(form.age, {'attr': {'class': 'form-control'}}) }}
+                                <div class="text-danger">{{ form_errors(form.age) }}</div>
+                            </div>
+                            <div class="form-group mt-3">
+                                {{ form_label(form.phoneNumber, 'Phone Number:', {'label_attr': {'class': 'form-label'}}) }}
+                                {{ form_widget(form.phoneNumber, {'attr': {'class': 'form-control'}}) }}
+                                <div class="text-danger">{{ form_errors(form.phoneNumber) }}</div>
+                            </div>
+                            <div class="form-group mt-3">
+                                {{ form_label(form.country, 'Country:', {'label_attr': {'class': 'form-label'}}) }}
+                                {{ form_widget(form.country, {'attr': {'class': 'form-control'}}) }}
+                                <div class="text-danger">{{ form_errors(form.country) }}</div>
+                            </div>
+                            <div class="form-group mt-3">
+                                {{ form_label(form.plainPassword, 'Password:', {'label_attr': {'class': 'form-label'}}) }}
+                                {{ form_widget(form.plainPassword, {'attr': {'class': 'form-control', 'placeholder': 'Leave blank if unchanged'}}) }}
+                                <div class="text-danger">{{ form_errors(form.plainPassword) }}</div>
+                            </div>
+                            <div class="form-group mt-3">
+                                <div class="form-check">
+                                    {{ form_widget(form.agreeTerms, {'attr': {'class': 'form-check-input'}}) }}
+                                    <label class="form-check-label">I agree to the terms and conditions</label>
+                                </div>
+                                <div class="text-danger">{{ form_errors(form.agreeTerms) }}</div>
+                            </div>
+                            <button type="submit" class="btn btn-success mt-3">Save Basic Information</button>
+                        {{ form_end(form) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+    <script>
+        function showForm(role) {
+            document.getElementById('role-selection').classList.add('d-none');
+            if (role === 'doctor') {
+                document.getElementById('doctor-form').classList.remove('d-none');
+            } else {
+                document.getElementById('patient-form').classList.remove('d-none');
+            }
+        }
+    </script>
+{% endblock %}
+    

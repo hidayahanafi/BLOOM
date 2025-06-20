@@ -1,0 +1,65 @@
+{% extends 'admin/layout.html.twig' %}
+
+{% block title %}Statistiques des Pharmacies{% endblock %}
+
+{% block content %}
+    <h1>Statistiques des Pharmacies</h1>
+
+    <div class="row">
+        <div class="col-md-6">
+            <h3>Répartition par Type</h3>
+            <div id="piechart" style="width: 100%; height: 400px;"></div>
+        </div>
+        <div class="col-md-6">
+            <h3>Répartition par Ville</h3>
+            <div id="barchart" style="width: 100%; height: 400px;"></div>
+        </div>
+    </div>
+
+    <a href="{{ path('listph') }}" class="btn btn-secondary mt-3">
+        Retour à la liste
+    </a>
+
+    <!-- Scripts pour les graphiques -->
+    <script type="text/javascript">
+        document.addEventListener("DOMContentLoaded", function() {
+            // Charger Google Charts
+            google.charts.load('current', {'packages':['corechart']});
+            google.charts.setOnLoadCallback(drawCharts);
+
+            function drawCharts() {
+                // Données pour le graphique des types (camembert)
+                var pieData = google.visualization.arrayToDataTable([
+                    ['Type', 'Nombre'],
+                    {% for stat in statsType %}
+                        ['{{ stat.name }}', {{ stat.count }}],
+                    {% endfor %}
+                ]);
+
+                var pieOptions = {
+                    title: 'Répartition par Type',
+                    is3D: true,
+                };
+
+                var pieChart = new google.visualization.PieChart(document.getElementById('piechart'));
+                pieChart.draw(pieData, pieOptions);
+
+                // Données pour le graphique des villes (barres)
+                var barData = google.visualization.arrayToDataTable([
+                    ['Ville', 'Nombre'],
+                    {% for stat in statsVille %}
+                        ['{{ stat.name }}', {{ stat.count }}],
+                    {% endfor %}
+                ]);
+
+                var barOptions = {
+                    title: 'Répartition par Ville',
+                    legend: { position: 'none' },
+                };
+
+                var barChart = new google.visualization.ColumnChart(document.getElementById('barchart'));
+                barChart.draw(barData, barOptions);
+            }
+        });
+    </script>
+{% endblock %}

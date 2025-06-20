@@ -1,0 +1,227 @@
+{# templates/comment/_comment.html.twig #}
+<div class="card mb-3" id="comment-{{ comment.id }}">
+    <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <div class="d-flex align-items-center gap-2">
+                {# Avatar with User Initial #}
+                <div class="avatar-title bg-primary rounded-circle text-white">
+                    {% if comment.user %}
+                        {{ comment.user.name|first|upper }}
+                    {% else %}
+                        ?
+                    {% endif %}
+                </div>
+
+                {# Comment User Info #}
+                <div>
+                    <h6 class="mb-0">
+                        {% if comment.user %}
+                            {{ comment.user.name }}
+                        {% else %}
+                            Anonymous
+                        {% endif %}
+                    </h6>
+                    <small class="text-muted">
+                        {{ comment.commDate|date('M j, Y \\a\\t g:i a') }}
+                    </small>
+                    <div class="badge bg-info mt-1">
+                        Positivity: {{ comment.evaluationScore }}%
+                    </div>
+                </div>
+            </div>
+
+            {# Dropdown Menu for Edit/Delete #}
+            <div class="dropdown">
+                <button class="btn btn-link text-muted p-0" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="fas fa-ellipsis-v"></i>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end">
+                    <li>
+                        <a class="dropdown-item" href="{{ path('comment_edit', {'id': comment.id}) }}">
+                            <i class="fas fa-edit me-2"></i> Edit
+                        </a>
+                    </li>
+                    <li>
+                        <form method="post" action="{{ path('comment_delete', {'id': comment.id}) }}" onsubmit="return confirm('Are you sure?')">
+                            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ comment.id) }}">
+                            <button type="submit" class="dropdown-item text-danger">
+                                <i class="fas fa-trash me-2"></i> Delete
+                            </button>
+                        </form>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        {# Comment Content #}
+        <p class="card-text">{{ comment.commContent }}</p>
+
+        {# Reaction Buttons #}
+        <div class="reaction-container mt-3">
+            <div class="reaction-buttons">
+                <div class="reaction-wrapper">
+                    <button class="reaction-btn" data-reaction="empathetic">
+                        <span class="reaction-flag">❤️</span>
+                        <div class="tooltip">Empathetic</div>
+                    </button>
+                    <span class="reaction-count" data-reaction="empathetic">0</span>
+                </div>
+                <div class="reaction-wrapper">
+                    <button class="reaction-btn" data-reaction="supportive">
+                        <span class="reaction-flag">🙏</span>
+                        <div class="tooltip">Supportive</div>
+                    </button>
+                    <span class="reaction-count" data-reaction="supportive">0</span>
+                </div>
+                <div class="reaction-wrapper">
+                    <button class="reaction-btn" data-reaction="harsh">
+                        <span class="reaction-flag">🚩</span>
+                        <div class="tooltip">Harsh Tone</div>
+                    </button>
+                    <span class="reaction-count" data-reaction="harsh">0</span>
+                </div>
+            </div>
+        </div>
+
+        {# Reply Form #}
+        <div class="reply-form mt-3" id="replyForm-{{ comment.id }}" style="display: none;">
+            <form class="reply-form" data-parent-id="{{ comment.id }}">
+                <div class="mb-2">
+                    <textarea class="form-control" name="reply_content" rows="2" placeholder="Write your reply..."></textarea>
+                </div>
+                <button type="submit" class="btn btn-sm btn-primary">Post Reply</button>
+                <button type="button" class="btn btn-sm btn-secondary cancel-reply">Cancel</button>
+            </form>
+        </div>
+
+        {# Replies Section #}
+        <div class="replies ms-4 mt-3 ps-3 border-start">
+            {% for reply in comment.replies %}
+                {% if not reply.isBlocked %}
+                    {% include 'comment/_comment.html.twig' with {'comment': reply} %}
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+{# Styles #}
+<style>
+.reaction-container {
+    position: relative;
+}
+
+.reaction-buttons {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+}
+
+.reaction-wrapper {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+}
+
+.reaction-btn {
+    border: none;
+    background: none;
+    padding: 4px;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+    position: relative;
+}
+
+.reaction-btn:hover {
+    transform: scale(1.2);
+}
+
+.reaction-btn:hover .tooltip {
+    visibility: visible;
+    opacity: 1;
+    bottom: calc(100% + 5px);
+}
+
+.tooltip {
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0,0,0,0.8);
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    white-space: nowrap;
+    visibility: hidden;
+    opacity: 0;
+    transition: all 0.2s ease;
+    pointer-events: none;
+}
+
+.tooltip::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -4px;
+    border-width: 4px;
+    border-style: solid;
+    border-color: rgba(0,0,0,0.8) transparent transparent transparent;
+}
+
+.reaction-flag {
+    font-size: 18px;
+    display: block;
+}
+
+.reaction-count {
+    font-size: 12px;
+    color: #65676B;
+    font-weight: 500;
+    min-width: 20px;
+    text-align: center;
+    display: none;
+}
+
+.reaction-count.active {
+    display: block;
+}
+</style>
+
+{# JavaScript for Reactions #}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.reaction-btn').forEach(button => {
+        button.addEventListener('click', function() {
+            const commentId = this.closest('.card').id.split('-')[1];
+            const reaction = this.dataset.reaction;
+            const countElement = this.parentElement.querySelector('.reaction-count');
+            
+            // Toggle active state
+            const isActive = this.classList.toggle('active');
+            
+            // Update count display
+            let currentCount = parseInt(countElement.textContent) || 0;
+            currentCount = isActive ? currentCount + 1 : currentCount - 1;
+            countElement.textContent = currentCount;
+            countElement.classList.toggle('active', currentCount > 0);
+
+            // Send to server
+            fetch(`/comments/${commentId}/react`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: JSON.stringify({
+                    reaction: reaction,
+                    state: isActive
+                })
+            });
+        });
+    });
+});
+</script>

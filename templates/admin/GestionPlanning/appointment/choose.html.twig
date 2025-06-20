@@ -1,0 +1,76 @@
+{% extends 'admin/layout.html.twig' %}
+
+{% block title %}Admin - Choose a Doctor{% endblock %}
+
+{% block content %}
+<div class="container">
+  <div class="page-inner">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="card">
+          <div class="card-header">
+            <h4 class="card-title">Choose a Doctor for Appointment</h4>
+          </div>
+          <div class="card-body">
+            <div class="table-responsive">
+              <table id="planning-table" class="display table table-striped table-hover">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Doctor</th>
+                    <th>Availability</th>
+                    <th>Daily Working Hours</th>
+                    <th style="width: 10%">Actions</th>
+                  </tr>
+                </thead>
+                <tfoot>
+                  <tr>
+                    <th>ID</th>
+                    <th>Doctor</th>
+                    <th>Availability</th>
+                    <th>Daily Working Hours</th>
+                    <th>Actions</th>
+                  </tr>
+                </tfoot>
+                <tbody>
+                  {% for planning in plannings %}
+                    <tr>
+                      <td>{{ planning.id }}</td>
+                      <td>Dr. {{ planning.doctor.name }}</td>
+                      <td>
+                        {% if planning.startDate %}
+                          {{ planning.startDate|date('Y-m-d') }}
+                        {% else %}
+                          Open
+                        {% endif %}
+                        &mdash;
+                        {% if planning.endDate %}
+                          {{ planning.endDate|date('Y-m-d') }}
+                        {% else %}
+                          Open
+                        {% endif %}
+                      </td>
+                      <td>{{ planning.dailyStartTime|date('H:i') }} - {{ planning.dailyEndTime|date('H:i') }}</td>
+                      <td>
+                        <a href="{{ path('admin_appointment_new', {'planningId': planning.id, 'userId': user.id}) }}"
+                          class="btn btn-primary btn-sm">
+                          <i class="fa fa-calendar-plus"></i> Book Appointment
+                        </a>
+
+                      </td>
+                    </tr>
+                  {% else %}
+                    <tr>
+                      <td colspan="5" class="text-center">No available doctors at the moment.</td>
+                    </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

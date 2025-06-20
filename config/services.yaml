@@ -1,0 +1,47 @@
+# This file is the entry point to configure your own services.
+# Files in the packages/ subdirectory configure your dependencies.
+
+parameters:
+  diploma_directory: "%kernel.project_dir%/public/assets/diplomas"
+  images_directory: "%kernel.project_dir%/public/uploads"
+  images_base_url: "/uploads"
+
+services:
+  App\Service\AppointmentMailer:
+    arguments:
+      $dsn: "%env(APPOINTMENT_MAILER_DSN)%"
+      $senderEmail: "%env(APPOINTMENT_MAILER_FROM)%"
+      $senderName: "%env(APPOINTMENT_MAILER_NAME)%"
+
+  App\Form\PlanningType:
+    arguments:
+      $security: "@security.helper"
+  # Default configuration for services in *this* file
+  _defaults:
+    autowire: true # Automatically injects dependencies in your services.
+    autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
+
+  Twilio\Rest\Client:
+    arguments:
+      $username: "%env(TWILIO_ACCOUNT_SID)%"
+      $password: "%env(TWILIO_AUTH_TOKEN)%"
+
+  # Makes classes in src/ available to be used as services
+  # This creates a service per class whose id is the fully-qualified class name
+  App\:
+    resource: "../src/"
+    exclude:
+      - "../src/DependencyInjection/"
+      - "../src/Entity/"
+      - "../src/Kernel.php"
+
+  # Manually defined services
+  App\EventSubscriber\BlockedUserSubscriber:
+    arguments:
+      $tokenStorage: "@security.token_storage"
+      $router: "@router"
+      $requestStack: "@request_stack"
+    tags:
+      - { name: kernel.event_subscriber }
+
+  App\Security\AccessDeniedHandler: ~

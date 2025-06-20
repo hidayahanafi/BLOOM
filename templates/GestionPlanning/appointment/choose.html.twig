@@ -1,0 +1,52 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Choose a Doctor{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h1 class="mb-0">Choose a Doctor for Your Appointment</h1>
+    </div>
+
+    <div class="card shadow-lg p-4">
+        <table class="table table-striped table-bordered">
+            <thead class="table-dark text-center">
+                <tr>
+                    <th>Doctor</th>
+                    <th>Available From</th>
+                    <th>Available To</th>
+                    <th>Daily Schedule</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for planning in plannings %}
+                    <tr>
+                        <td>{{ planning.doctor.name }}</td>
+                        <td>
+                            {% if planning.startDate %}
+                                {{ planning.startDate|date('Y-m-d') }}
+                            {% else %}
+                                Open
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if planning.endDate %}
+                                {{ planning.endDate|date('Y-m-d') }}
+                            {% else %}
+                                Open
+                            {% endif %}
+                        </td>
+                        <td>{{ planning.dailyStartTime|date('H:i') }} - {{ planning.dailyEndTime|date('H:i') }}</td>
+                        <td class="text-center">
+                            <a href="{{ path('appointment_new', {'planningId': planning.id}) }}" class="btn btn-primary btn-sm">Book Appointment</a>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr><td colspan="5" class="text-center">No available doctors at the moment.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

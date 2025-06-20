@@ -1,0 +1,50 @@
+{% extends 'admin/layout.html.twig' %}
+
+{% block title %}Edit Planning{% endblock %}
+
+{% block content %}
+<div class="container">
+  <div class="page-inner">
+    <div class="row justify-content-center">
+      <div class="col-md-8">
+        <div class="card">
+          <div class="card-header">
+            <h4 class="card-title">Edit Planning</h4>
+          </div>
+          <div class="card-body">
+          {{ form_start(form, { 'attr': { 'novalidate': 'novalidate' } }) }}
+              
+              <!-- Start Date field -->
+              <div class="form-group mt-3">
+                {{ form_label(form.startDate) }}
+                {{ form_widget(form.startDate, {'attr': {'class': 'form-control'}}) }}
+                {{ form_errors(form.startDate) }}
+              </div>
+              <!-- End Date field -->
+              <div class="form-group mt-3">
+                {{ form_label(form.endDate) }}
+                {{ form_widget(form.endDate, {'attr': {'class': 'form-control'}}) }}
+                {{ form_errors(form.endDate) }}
+              </div>
+              <!-- Daily Start Time field -->
+              <div class="form-group mt-3">
+                {{ form_label(form.dailyStartTime) }}
+                {{ form_widget(form.dailyStartTime, {'attr': {'class': 'form-control'}}) }}
+                {{ form_errors(form.dailyStartTime) }}
+              </div>
+              <!-- Daily End Time field -->
+              <div class="form-group mt-3">
+                {{ form_label(form.dailyEndTime) }}
+                {{ form_widget(form.dailyEndTime, {'attr': {'class': 'form-control'}}) }}
+                {{ form_errors(form.dailyEndTime) }}
+              </div>
+              
+              <button type="submit" class="btn btn-primary mt-3">Update</button>
+            {{ form_end(form) }}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

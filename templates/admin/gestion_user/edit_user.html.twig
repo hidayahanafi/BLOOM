@@ -1,0 +1,209 @@
+{% extends 'admin/layout.html.twig' %}
+
+{% block title %}Modifier l'Utilisateur - {{ user.name }}{% endblock %}
+
+
+{% block content %}
+<div class="container">
+    <div class="card m-5 mt-10">
+        <div class="card-header">
+            <h4>Modifier l'Utilisateur - {{ user.name }}</h4>
+        </div>
+        <div class="card-body p-4">
+            <h4>Informations de base</h4>
+            {{ form_start(form, { 'attr': { 'class': 'form-horizontal needs-validation', 'novalidate': 'novalidate' } }) }}
+
+            <div class="form-group mb-4">
+                {{ form_label(form.name, 'Nom', {'label_attr': {'class': 'form-label font-weight-bold'}}) }}
+                {{ form_widget(form.name, {'attr': {'class': 'form-control'}}) }}
+                {{ form_errors(form.name) }}
+            </div>
+
+            <div class="form-group mb-4">
+                {{ form_label(form.email, 'Email', {'label_attr': {'class': 'form-label font-weight-bold'}}) }}
+                {{ form_widget(form.email, {'attr': {'class': 'form-control'}}) }}
+                {{ form_errors(form.email) }}
+            </div>
+
+            <div class="form-group mb-4">
+                {{ form_label(form.plainPassword, 'Mot de passe', {'label_attr': {'class': 'form-label font-weight-bold'}}) }}
+                {{ form_widget(form.plainPassword, {'attr': {'class': 'form-control', 'placeholder': 'Laisser vide si inchangé'}}) }}
+                {{ form_errors(form.plainPassword) }}
+            </div>
+
+            <div class="form-group mb-4">
+                {{ form_label(form.age, 'Âge', {'label_attr': {'class': 'form-label font-weight-bold'}}) }}
+                {{ form_widget(form.age, {'attr': {'class': 'form-control'}}) }}
+                {{ form_errors(form.age) }}
+            </div>
+
+            <div class="form-group mb-4">
+                {{ form_label(form.phoneNumber, 'Téléphone', {'label_attr': {'class': 'form-label font-weight-bold'}}) }}
+                {{ form_widget(form.phoneNumber, {'attr': {'class': 'form-control'}}) }}
+                {{ form_errors(form.phoneNumber) }}
+            </div>
+
+            <div class="form-group mb-4">
+                {{ form_label(form.country, 'Pays', {'label_attr': {'class': 'form-label font-weight-bold'}}) }}
+                {{ form_widget(form.country, {'attr': {'class': 'form-control'}}) }}
+                {{ form_errors(form.country) }}
+            </div>
+
+            <div class="form-group mt-3">
+                <div class="form-check">
+                    {{ form_widget(form.agreeTerms, {'attr': {'class': 'form-check-input'}}) }}
+                    <label class="form-check-label">I agree to the terms and cond   itions</label>
+                </div>
+                <div class="text-danger">{{ form_errors(form.agreeTerms) }}</div>
+            </div>
+
+            <div class="form-group">
+                <button type="submit" class="btn btn-primary btn-lg btn-block">Enregistrer les modifications</button>
+            </div>
+
+            {{ form_end(form) }}
+        </div>
+    </div>
+
+    {# Role-Specific Form (Doctor/Patient) #}
+    {% if 'ROLE_DOCTOR' in user.roles %}
+    <div class="card mt-4 m-5">
+        <div class="card-header">
+            <h4>Informations spécifiques au Médecin</h4>
+        </div>
+        <div id="doctor-form" class="mt-4 p-4">
+            {{ form_start(extraForm, {'attr': {'class': 'needs-validation', 'novalidate': 'novalidate'}}) }}
+
+            <div class="form-group mt-3">
+                {{ form_label(extraForm.doctorType, 'Doctor Type:', {'label_attr': {'class': 'form-label font-weight-bold'}}) }}
+                {{ form_widget(extraForm.doctorType, {'attr': {'class': 'form-control'}}) }}
+                <div class="text-danger">{{ form_errors(extraForm.doctorType) }}</div>
+            </div>
+
+            <div class="form-group mt-3">
+                {{ form_label(extraForm.specializations, 'Specializations:', {'label_attr': {'class': 'form-label font-weight-bold'}}) }}
+                {% for specialization in extraForm.specializations %}
+                    <div class="form-check">
+                        {{ form_widget(specialization, {'attr': {'class': 'form-check-input'}}) }}
+                        <label class="form-check-label">{{ specialization.vars.label }}</label>
+                    </div>
+                {% endfor %}
+                <div class="text-danger">{{ form_errors(extraForm.specializations) }}</div>
+            </div>
+
+            <div class="form-group mt-3">
+                {{ form_label(extraForm.experience, 'Years of Practice:', {'label_attr': {'class': 'form-label font-weight-bold'}}) }}
+                {{ form_widget(extraForm.experience, {'attr': {'class': 'form-control'}}) }}
+                <div class="text-danger">{{ form_errors(extraForm.experience) }}</div>
+            </div>
+
+            <div class="form-group mt-3">
+                {{ form_label(extraForm.languagesSpoken, 'Languages Spoken:', {'label_attr': {'class': 'form-label font-weight-bold'}}) }}
+                {% for language in extraForm.languagesSpoken %}
+                    <div class="form-check">
+                        {{ form_widget(language, {'attr': {'class': 'form-check-input'}}) }}
+                        <label class="form-check-label">{{ language.vars.label }}</label>
+                    </div>
+                {% endfor %}
+                <div class="text-danger">{{ form_errors(extraForm.languagesSpoken) }}</div>
+            </div>
+
+            <div class="form-group mt-3">
+                {{ form_label(extraForm.therapeuticApproaches, 'Therapeutic Approaches:', {'label_attr': {'class': 'form-label font-weight-bold'}}) }}
+                {% for approach in extraForm.therapeuticApproaches %}
+                    <div class="form-check">
+                        {{ form_widget(approach, {'attr': {'class': 'form-check-input'}}) }}
+                        <label class="form-check-label">{{ approach.vars.label }}</label>
+                    </div>
+                {% endfor %}
+                <div class="text-danger">{{ form_errors(extraForm.therapeuticApproaches) }}</div>
+            </div>
+
+            <div class="form-group mt-3">
+                {{ form_label(extraForm.appointmentMethods, 'Appointment Methods:', {'label_attr': {'class': 'form-label font-weight-bold'}}) }}
+                {% for method in extraForm.appointmentMethods %}
+                    <div class="form-check">
+                        {{ form_widget(method, {'attr': {'class': 'form-check-input'}}) }}
+                        <label class="form-check-label">{{ method.vars.label }}</label>
+                    </div>
+                {% endfor %}
+                <div class="text-danger">{{ form_errors(extraForm.appointmentMethods) }}</div>
+            </div>
+
+            <div class="form-group mt-3">
+                {{ form_label(extraForm.diploma, 'Upload Your Diploma:', {'label_attr': {'class': 'form-label font-weight-bold'}}) }}
+                {{ form_widget(extraForm.diploma, {'attr': {'class': 'form-control'}}) }}
+                <div class="text-danger">{{ form_errors(extraForm.diploma) }}</div>
+            </div>
+
+            <button type="submit" class="btn btn-success btn-lg btn-block mt-3">Edit his medical infos</button>
+            {{ form_end(extraForm) }}
+        </div>
+    </div>
+    {% elseif 'ROLE_PATIENT' in user.roles %}
+    <div class="card mt-4 m-5">
+        <div class="card-header">
+            <h4>Informations spécifiques au Patient</h4>
+        </div>
+        <div id="patient-form" class="mt-4 p-4">
+            <h5>Help us learn more about you</h5>
+            {{ form_start(extraForm, {'attr': {'class': 'needs-validation', 'novalidate': 'novalidate'}}) }}
+
+            <div class="form-group mt-3">
+                {{ form_label(extraForm.relationshipStatus, 'Relationship Status:', {'label_attr': {'class': 'form-label font-weight-bold'}}) }}
+                {{ form_widget(extraForm.relationshipStatus, {'attr': {'class': 'form-control'}}) }}
+                <div class="text-danger">{{ form_errors(extraForm.relationshipStatus) }}</div>
+            </div>
+
+            <div class="form-group mt-3">
+                {{ form_label(extraForm.religion, 'Religion:', {'label_attr': {'class': 'form-label font-weight-bold'}}) }}
+                {{ form_widget(extraForm.religion, {'attr': {'class': 'form-control'}}) }}
+                <div class="text-danger">{{ form_errors(extraForm.religion) }}</div>
+            </div>
+
+            <div class="form-group mt-3">
+                {{ form_label(extraForm.religionImportance, 'Religion Importance:', {'label_attr': {'class': 'form-label font-weight-bold'}}) }}
+                {{ form_widget(extraForm.religionImportance, {'attr': {'class': 'form-control'}}) }}
+                <div class="text-danger">{{ form_errors(extraForm.religionImportance) }}</div>
+            </div>
+
+            <div class="form-group mt-3">
+                {{ form_label(extraForm.therapyExperience, 'Therapy Experience:', {'label_attr': {'class': 'form-label font-weight-bold'}}) }}
+                <div class="form-check">
+                    {{ form_widget(extraForm.therapyExperience.0, {'attr': {'class': 'form-check-input'}}) }}
+                    <label class="form-check-label">{{ extraForm.therapyExperience.0.vars.label }}</label>
+                </div>
+                <div class="form-check">
+                    {{ form_widget(extraForm.therapyExperience.1, {'attr': {'class': 'form-check-input'}}) }}
+                    <label class="form-check-label">{{ extraForm.therapyExperience.1.vars.label }}</label>
+                </div>
+                <div class="text-danger">{{ form_errors(extraForm.therapyExperience) }}</div>
+            </div>
+
+            <div class="form-group mt-3">
+                <label class="form-label font-weight-bold">What led you to consider therapy today? (Select all that apply)</label>
+                {% for choice in extraForm.therapyReasons %}
+                    <div class="form-check">
+                        {{ form_widget(choice, {'attr': {'class': 'form-check-input'}}) }}
+                        <label class="form-check-label">{{ choice.vars.label }}</label>
+                    </div>
+                {% endfor %}
+                <div class="text-danger">{{ form_errors(extraForm.therapyReasons) }}</div>
+            </div>
+
+            <div class="form-group mt-3">
+                {{ form_label(extraForm.therapyType, 'Therapy Type:', {'label_attr': {'class': 'form-label font-weight-bold'}}) }}
+                {{ form_widget(extraForm.therapyType, {'attr': {'class': 'form-control'}}) }}
+                <div class="text-danger">{{ form_errors(extraForm.therapyType) }}</div>
+            </div>
+
+            
+
+            <button type="submit" class="btn btn-success btn-lg btn-block mt-3">Edit his medical infos</button>
+            {{ form_end(extraForm) }}
+        </div>
+    </div>
+    {% endif %}
+
+</div>
+{% endblock %}

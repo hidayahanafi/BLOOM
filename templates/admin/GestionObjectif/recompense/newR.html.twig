@@ -1,0 +1,85 @@
+{% extends 'admin/layout.html.twig' %}
+
+{% block title %}Ajouter une récompense{% endblock %}
+
+{% block content  %}
+    <h1>Ajouter une récompense</h1>
+
+    {# Affichage des messages flash de succès #}
+    {% for message in app.flashes('success') %}
+        <div class="alert alert-success">{{ message }}</div>
+    {% endfor %}
+
+    {# Affichez les erreurs globales du formulaire #}
+    {% if form.vars.errors|length > 0 %}
+        <div class="alert alert-danger">
+            {% for error in form.vars.errors %}
+                <p>{{ error.message }}</p>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+
+    <div class="card shadow-sm p-4">
+        {# Champ : Nom de la récompense #}
+        <div class="form-group mb-3">
+            {{ form_label(form.nom, null, {'label_attr': {'class': 'form-label'}}) }}
+            {{ form_widget(form.nom, {'attr': {'class': 'form-control'}}) }}
+            <div class="text-danger">
+                {{ form_errors(form.nom) }}
+            </div>
+        </div>
+
+        {# Champ : Description #}
+        <div class="form-group mb-3">
+            {{ form_label(form.description, null, {'label_attr': {'class': 'form-label'}}) }}
+            {{ form_widget(form.description, {'attr': {'class': 'form-control'}}) }}
+            <div class="text-danger">
+                {{ form_errors(form.description) }}
+            </div>
+        </div>
+
+        {# Champ : Coût (points nécessaires) #}
+        <div class="form-group mb-3">
+            {{ form_label(form.cout, null, {'label_attr': {'class': 'form-label'}}) }}
+            {{ form_widget(form.cout, {'attr': {'class': 'form-control'}}) }}
+            <div class="text-danger">
+                {{ form_errors(form.cout) }}
+            </div>
+        </div>
+
+        {# Champ : État #}
+        <div class="form-group mb-3">
+            {{ form_label(form.etat, null, {'label_attr': {'class': 'form-label'}}) }}
+            {{ form_widget(form.etat, {'attr': {'class': 'form-control'}}) }}
+            <div class="text-danger">
+                {{ form_errors(form.etat) }}
+            </div>
+        </div>
+
+        {# Champ : URL de l'image #}
+        <div class="form-group mb-3">
+            {{ form_label(form.img, null, {'label_attr': {'class': 'form-label'}}) }}
+            {{ form_widget(form.img, {'attr': {'class': 'form-control'}}) }}
+            <div class="text-danger">
+                {{ form_errors(form.img) }}
+            </div>
+        </div>
+
+        {# Champ : Objectif (sélectionner un objectif) #}
+        <div class="form-group mb-3">
+            {{ form_label(form.objectif, null, {'label_attr': {'class': 'form-label'}}) }}
+            {{ form_widget(form.objectif, {'attr': {'class': 'form-select'}}) }} {# Utilisation de form-select pour styliser la liste déroulante #}
+            <div class="text-danger">
+                {{ form_errors(form.objectif) }}
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-4">
+        <button class="btn btn-primary">Ajouter</button>
+    </div>
+
+    {{ form_end(form) }}
+{% endblock %}

@@ -1,0 +1,255 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Liste des Médicaments{% endblock %}
+
+{% block content %}
+    <h1 class="page-title">Liste des Médicaments</h1>
+
+    <!-- Cart Button -->
+    <button id="showPanierBtn" class="btn btn-success mb-3" style="position: fixed; right: 20px; top: 160px;  height: 40px; width: 50px;">
+        <i class="fas fa-shopping-cart"></i> 
+    </button>
+
+    <!-- Cart Popup -->
+    <!-- Retirer onclick="closeCart()" du bouton Fermer -->
+    <div id="panierPopup" class="cart-popup" style="position: fixed; right: 20px; top: 200px; display: none;">
+        <div class="cart-container">
+            <h2>Votre Panier</h2>
+            <ul id="panierList">
+                <!-- Cart items will be loaded dynamically here -->
+            </ul>
+            <div class="cart-footer">
+                <div class="total-section">
+                    Total: <span id="cartTotal">0 €</span>
+                </div>
+                <form id="panierForm" action="{{ path('add_panier') }}" method="POST">
+                    <input type="hidden" name="panier_data" id="panierData">
+                    <button type="submit" class="btn btn-primary">Valider la commande</button>
+                </form>
+                
+                <!-- Pas de onclick ici -->
+                <button class="btn cancel">Fermer</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Medicament List -->
+    <div class="medicament-container">.
+        {% for medicament in medicaments %}
+            <div class="medicament-card"
+                {% if medicament.base64Image is defined %}
+                    style="background-image: url('{{ medicament.base64Image }}');"
+                {% else %}
+                    style="background-image: url('{{ asset(medicament.imageurl) }}');"
+                {% endif %}
+            >
+                <div class="medicament-overlay">
+                    <div class="medicament-name">{{ medicament.nom }}</div>
+                    <div class="medicament-details">
+                        <p><strong>Description:</strong> {{ medicament.description }}</p>
+                        <p><strong>Dosage:</strong> {{ medicament.dosage }} mg</p>
+                        <p><strong>Catégorie:</strong> {{ medicament.categorie }}</p>
+                        <p><strong>Quantité:</strong> {{ medicament.quantite }}</p>
+                        <p><strong>Prix:</strong> {{ medicament.prix }} €</p>           
+                    </div>
+                    <button class="add-to-cart-button" 
+                        data-id="{{ medicament.id }}"
+                        data-name="{{ medicament.nom }}"
+                        data-price="{{ medicament.prix }}"
+                        data-medicament-id="{{ medicament.id }}"> <!-- ADD THIS LINE -->
+                        Ajouter au Panier
+                    </button>
+
+                </div> 
+            </div>
+        {% else %}
+            <p class="no-medicaments">Aucun médicament trouvé.</p>
+        {% endfor %}
+    </div>
+{% endblock %}
+
+
+
+{% block javascripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const cart = {
+            items: JSON.parse(localStorage.getItem('cart')) || [],
+    
+            addItem(medicament) {
+                const existing = this.items.find(item => item.id === medicament.id);
+                if (existing) {
+                    existing.quantity++;
+                } else {
+                    this.items.push({ ...medicament, quantity: 1 });
+                }
+                this.save();
+                this.updateUI();
+            },
+    
+            removeItem(id) {
+                this.items = this.items.filter(item => item.id !== id);
+                this.save();
+                this.updateUI();
+            },
+    
+            updateQuantity(id, change) {
+                const item = this.items.find(item => item.id === id);
+                if (item) {
+                    item.quantity = Math.max(1, item.quantity + change);
+                    this.save();
+                    this.updateUI();
+                }
+            },
+    
+            save() {
+                localStorage.setItem('cart', JSON.stringify(this.items));
+            },
+    
+            getTotal() {
+                return this.items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            },
+    
+            updateUI() {
+                const panierList = document.getElementById('panierList');
+                const cartTotal = document.getElementById('cartTotal');
+    
+                panierList.innerHTML = this.items.length > 0
+                    ? this.items.map(item => `
+                        <li class="cart-item" data-id="${item.id}">
+                            <div>
+                                <span>${item.name}</span>
+                                <span>${item.quantity} x ${item.price} €</span>
+                            </div>
+                            <div class="quantity-controls">
+                                <button class="minus">-</button>
+                                <span>${item.quantity}</span>
+                                <button class="plus">+</button>
+                                <button class="remove">×</button>
+                            </div>
+                        </li>
+                    `).join('')
+                    : '<li>Votre panier est vide</li>';
+    
+                cartTotal.textContent = this.getTotal().toFixed(2) + ' €';
+    
+                this.addEventListeners();
+            },
+    
+            addEventListeners() {
+                document.querySelectorAll('.cart-item').forEach(itemEl => {
+                    const id = parseInt(itemEl.dataset.id, 10);
+    
+                    itemEl.querySelector('.plus').addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        this.updateQuantity(id, 1);
+                    });
+    
+                    itemEl.querySelector('.minus').addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        this.updateQuantity(id, -1);
+                    });
+    
+                    itemEl.querySelector('.remove').addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        this.removeItem(id);
+                    });
+                });
+            }
+        };
+    
+        // Popup elements
+        const panierPopup = document.getElementById('panierPopup');
+        const showPanierBtn = document.getElementById('showPanierBtn');
+        const closePanierBtn = document.querySelector('.cancel');
+    
+        // Ensure the popup is properly hidden at start
+        panierPopup.classList.remove('show');
+        panierPopup.style.display = "none";
+    
+        // Toggle cart display
+        showPanierBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            panierPopup.style.display = "block"; 
+            setTimeout(() => panierPopup.classList.toggle('show'), 10);
+        });
+    
+        // Close the cart
+        closePanierBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            panierPopup.classList.remove('show');
+            setTimeout(() => panierPopup.style.display = "none", 300);
+        });
+    
+        // Close when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!panierPopup.contains(e.target) && e.target !== showPanierBtn) {
+                panierPopup.classList.remove('show');
+                setTimeout(() => panierPopup.style.display = "none", 300);
+            }
+        });
+    
+        // Add to cart
+        document.addEventListener('click', (e) => {
+            if (e.target.classList.contains('add-to-cart-button')) {
+                const id = parseInt(e.target.dataset.id, 10);
+                const name = e.target.dataset.name;
+                const price = parseFloat(e.target.dataset.price);
+                
+                let existingItem = cart.items.find(item => item.id === id);
+                if (existingItem) {
+                    existingItem.quantity++;
+                } else {
+                    cart.items.push({ id, name, price, quantity: 1 });
+                }
+        
+                cart.save();
+                cart.updateUI();
+            }
+        });
+        
+    
+        cart.updateUI();
+        // Handle form submission
+    document.getElementById('panierForm').addEventListener('submit', function (e) {
+        // Populate the hidden input field with the cart data
+        const panierData = JSON.stringify(cart.items);
+        document.getElementById('panierData').value = panierData;
+    
+        // Debug: Log the panierData to the console
+        console.log('panier_data:', panierData);
+    
+        // If the cart is empty, prevent form submission and show a message
+        if (cart.items.length === 0) {
+            e.preventDefault(); // Prevent form submission
+            alert('Votre panier est vide. Ajoutez des médicaments avant de valider la commande.');
+        }
+    });
+    // Add to cart button functionality
+    document.querySelectorAll('.add-to-cart-button').forEach(button => {
+        button.addEventListener('click', () => {
+            const medicament = {
+                id: button.dataset.medicamentId,
+                name: button.dataset.name,
+                price: parseFloat(button.dataset.price)
+            };
+            cart.addItem(medicament);
+        });
+    });
+
+    // Update cart UI on load
+    cart.updateUI();
+
+    // Handle form submission
+    document.getElementById('panierForm').addEventListener('submit', (e) => {
+        e.preventDefault();
+        document.getElementById('panierData').value = JSON.stringify(cart.items);
+        e.target.submit();
+        localStorage.removeItem('cart'); // Clear the cart after submission
+    });
+
+    });
+    
+    
+</script>
+{% endblock %}

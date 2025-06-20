@@ -1,0 +1,25 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Appointment Details{% endblock %}
+
+{% block content %}
+<h1>Appointment Details</h1>
+
+<ul>
+    <li><strong>ID:</strong> {{ appointment.id }}</li>
+    <li>
+        <strong>Doctor:</strong> {{ appointment.planning.doctor.name }}
+    </li>
+    <li>
+        <strong>Date & Time:</strong> {{ appointment.startAt|date('Y-m-d H:i') }}
+    </li>
+</ul>
+
+<a href="{{ path('appointment_index') }}" class="btn">Back to Appointments</a>
+<a href="{{ path('appointment_edit', {'id': appointment.id}) }}" class="btn">Edit</a>
+
+<form method="post" action="{{ path('appointment_delete', {'id': appointment.id}) }}" style="display:inline;" onsubmit="return confirm('Are you sure you want to delete this appointment?');">
+    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ appointment.id) }}">
+    <button type="submit" class="btn btn-danger">Delete</button>
+</form>
+{% endblock %}

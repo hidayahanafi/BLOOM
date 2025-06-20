@@ -1,0 +1,1437 @@
+{% block head %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>MEDINOVA - Hospital Website Template</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="Free HTML Templates" name="keywords">
+    <meta content="Free HTML Templates" name="description">
+
+    <!-- Favicon -->
+    <link href={{asset('assets/img/favicon.ico')}} rel="icon">
+
+    <!-- Google Web Fonts -->
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@400;700&family=Roboto:wght@400;700&display=swap" rel="stylesheet">  
+
+    <!-- Icon Font Stylesheet -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
+
+    <!-- Libraries Stylesheet -->
+    <link href={{asset("assets/lib/owlcarousel/assets/owl.carousel.min.css")}} rel="stylesheet">
+    <link href={{asset("assets/lib/tempusdominus/css/tempusdominus-bootstrap-4.min.css")}} rel="stylesheet" />
+
+    <!-- Customized Bootstrap Stylesheet -->
+    <link href={{asset('assets/css/bootstrap.min.css')}} rel="stylesheet">
+    <link rel="stylesheet" href={{asset('assets/scss/bootstrap.scss')}}>
+
+
+    <!-- Template Stylesheet -->
+    <link href={{asset('assets/css/style.css')}} rel="stylesheet">
+</head>
+{% endblock %}
+<body>
+    {% block topbar %}
+    <!-- Topbar Start -->
+    <div class="container-fluid py-2 border-bottom d-none d-lg-block">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6 text-center text-lg-start mb-2 mb-lg-0">
+                    <div class="d-inline-flex align-items-center">
+                        <a class="text-decoration-none text-body pe-3" href=""><i class="bi bi-telephone me-2"></i>+216 25 000 000</a>
+                        <span class="text-body">|</span>
+                        <a class="text-decoration-none text-body px-3" href=""><i class="bi bi-envelope me-2"></i>info@example.com</a>
+                    </div>
+                </div>
+                <div class="col-md-6 text-center text-lg-end">
+                    <div class="d-inline-flex align-items-center">
+                        <a class="text-body px-2" href="">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                        <a class="text-body px-2" href="">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                        <a class="text-body px-2" href="">
+                            <i class="fab fa-linkedin-in"></i>
+                        </a>
+                        <a class="text-body px-2" href="">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                        <a class="text-body ps-2" href="">
+                            <i class="fab fa-youtube"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Topbar End -->
+    {% endblock %}
+
+    {% block navbar %}
+    <!-- Navbar Start -->
+    <div class="container-fluid sticky-top bg-white shadow-sm">
+        <div class="container">
+            <nav class="navbar navbar-expand-lg bg-white navbar-light py-3 py-lg-0">
+                <a href="#" class="navbar-brand">
+                    {% block title %}
+                        <h1 class="m-0 text-uppercase text-primary">
+                            <i class="fa fa-clinic-medical me-2"></i>BLOOM
+                        </h1>
+                    {% endblock %}
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarCollapse">
+                    <div class="navbar-nav ms-auto py-0">
+                        <a href="{{ path('home') }}" class="nav-item nav-link {% if app.request.attributes.get('_route') == 'home' %}active{% endif %}">Home</a>
+                        <a href="{{ path('about') }}" class="nav-item nav-link {% if app.request.attributes.get('_route') == 'about' %}active{% endif %}">About</a>
+                        <a href="{{ path('services') }}" class="nav-item nav-link {% if app.request.attributes.get('_route') == 'services' %}active{% endif %}">Services</a>
+                        <a href="{{ path('appointment_choose') }}" class="nav-item nav-link {% if app.request.attributes.get('_route') == 'booking' %}active{% endif %}">Booking</a>
+
+                        <!-- Dropdown Menu -->
+                        <div class="nav-item dropdown">
+                            <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Pages</a>
+                            <div class="dropdown-menu m-0">
+                                <a href="{{ path('app_blog') }}" class="dropdown-item">Blog</a>
+                                <a href="{{ path('app_pharmacie') }}" class="dropdown-item">Pharmacy</a>
+
+                               {% if app.user %}
+    <a href="{{ path('app_objectif_page', {'id_user': app.user.id}) }}" class="dropdown-item">Objectives</a>
+{% endif %}
+
+                                <a href="{{ path('events_list') }}" class="dropdown-item">Events and Courses</a>
+                            </div>
+                        </div>
+
+                        <a href="{{ path('contact') }}" class="nav-item nav-link {% if app.request.attributes.get('_route') == 'contact' %}active{% endif %}">Contact</a>
+
+                        <!-- Profile Dropdown (Visible when user is logged in) -->
+                        {% if app.user %}
+                        <li class="nav-item dropdown ms-3">
+                            <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button" data-bs-toggle="dropdown">
+                                <img src="{{ asset('assets/dashboard/img/profile.jpg') }}" alt="Profile" class="rounded-circle" width="35" height="35">
+                                <span class="ms-2 d-none d-lg-inline">Hi, {{ app.user.name }}</span>
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                <li>
+                                    <div class="dropdown-header text-center">
+                                        <img src="{{ asset('assets/dashboard/img/profile.jpg') }}" alt="Profile" class="rounded-circle" width="50" height="50">
+                                        <h6 class="mt-2">{{ app.user.name }}</h6>
+                                        <p class="text-muted">{{ app.user.email }}</p>
+                                    </div>
+                                </li>
+                                <li><a class="dropdown-item" href="{{path('user_profile')}}">My Profile</a></li>
+                                <li><a class="dropdown-item" href="{{path('appointment_index')}}">My Appointments</a></li>
+                                <li><a class="dropdown-item" href="#">Inbox</a></li>
+                                <div class="dropdown-divider"></div>
+                                <li><a class="dropdown-item" href="#">Account Settings</a></li>
+                                <div class="dropdown-divider"></div>
+                                <li><a class="dropdown-item text-danger" href="{{ path('logout') }}">Logout</a></li>
+                            </ul>
+                        </li>
+                        {% else %}
+                        <!-- Login & Register Buttons (Visible when user is not logged in) -->
+                        <div class="d-flex align-items-center ms-3">
+                            <a href="{{ path('login') }}" class="btn btn-login me-2">Login</a>
+                            <a href="{{ path('registration_choice') }}" class="btn btn-register">Register</a>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </nav>
+        </div>
+    </div>
+    <!-- Navbar End -->
+    {% endblock %}
+
+
+
+    {% block content %}
+  <!-- Hero Start -->
+<div class="container-fluid bg-primary py-5 mb-5 hero-header">
+    <div class="container py-5">
+        <div class="row justify-content-start">
+            <div class="col-lg-8 text-center text-lg-start">
+                <h5 class="d-inline-block text-primary text-uppercase border-bottom border-5" style="border-color: rgba(256, 256, 256, .3) !important;">Bienvenue chez Bloom</h5>
+                <h1 class="display-1 text-white mb-md-4">Soutien Psychologique et Bien-être Mental</h1>
+                <div class="pt-2">
+                    <a href="#services" class="btn btn-light rounded-pill py-md-3 px-md-5 mx-2">Nos Services</a>
+                    <a href="#contact" class="btn btn-outline-light rounded-pill py-md-3 px-md-5 mx-2">Prendre Rendez-vous</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Hero End -->
+
+
+   <!-- About Start -->
+<div class="container-fluid py-5">
+    <div class="container">
+        <div class="row gx-5">
+            <div class="col-lg-5 mb-5 mb-lg-0" style="min-height: 500px;">
+                <div class="position-relative h-100">
+                    <img class="position-absolute w-100 h-100 rounded" src={{asset("assets/img/acc.jpg")}} style="object-fit: cover;">
+                </div>
+            </div>
+            <div class="col-lg-7">
+                <div class="mb-4">
+                    <h5 class="d-inline-block text-primary text-uppercase border-bottom border-5">À propos de nous</h5>
+                    <h1 class="display-4">Prenez soin de votre bien-être mental</h1>
+                </div>
+                <p>Votre santé mentale est notre priorité. Nous vous offrons un accompagnement personnalisé pour améliorer votre bien-être émotionnel, gérer le stress et retrouver un équilibre de vie. Nos spécialistes sont là pour vous écouter et vous guider.</p>
+                <div class="row g-3 pt-3">
+                    <div class="col-sm-3 col-6">
+                        <div class="bg-light text-center rounded-circle py-4">
+                            <i class="fa fa-3x fa-user-md text-primary mb-3"></i>
+                            <h6 class="mb-0">Psychologues<small class="d-block text-primary">Expérimentés</small></h6>
+                        </div>
+                    </div>
+                    <div class="col-sm-3 col-6">
+                        <div class="bg-light text-center rounded-circle py-4">
+                            <i class="fa fa-3x fa-comments text-primary mb-3"></i>
+                            <h6 class="mb-0">Thérapies<small class="d-block text-primary">Personnalisées</small></h6>
+                        </div>
+                    </div>
+                    <div class="col-sm-3 col-6">
+                        <div class="bg-light text-center rounded-circle py-4">
+                            <i class="fa fa-3x fa-heartbeat text-primary mb-3"></i>
+                            <h6 class="mb-0">Bien-être<small class="d-block text-primary">Émotionnel</small></h6>
+                        </div>
+                    </div>
+                    <div class="col-sm-3 col-6">
+                        <div class="bg-light text-center rounded-circle py-4">
+                            <i class="fa fa-3x fa-phone-alt text-primary mb-3"></i>
+                            <h6 class="mb-0">Support<small class="d-block text-primary">24/7</small></h6>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- About End -->
+
+<!-- Services Start -->
+<div class="container-fluid py-5">
+    <div class="container">
+        <div class="text-center mx-auto mb-5" style="max-width: 500px;">
+            <h5 class="d-inline-block text-primary text-uppercase border-bottom border-5">Nos services</h5>
+            <h1 class="display-4">Soutien en santé mentale</h1>
+        </div>
+        <div class="row g-5">
+            <div class="col-lg-4 col-md-6">
+                <div class="service-item bg-light rounded d-flex flex-column align-items-center justify-content-center text-center">
+                    <div class="service-icon mb-4">
+                        <i class="fa fa-2x fa-user-md text-white"></i>
+                    </div>
+                    <h4 class="mb-3">Psychologues</h4>
+                    <p class="m-0">Des professionnels qualifiés pour un suivi adapté à vos besoins.</p>
+                    <a class="btn btn-lg btn-primary rounded-pill" href="">
+                        <i class="bi bi-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6">
+                <div class="service-item bg-light rounded d-flex flex-column align-items-center justify-content-center text-center">
+                    <div class="service-icon mb-4">
+                        <i class="fa fa-2x fa-tasks text-white"></i>
+                    </div>
+                    <h4 class="mb-3">Objectifs Santé Mentale</h4>
+                    <p class="m-0">Fixez et suivez vos objectifs pour une meilleure santé mentale.</p>
+                    <a class="btn btn-lg btn-primary rounded-pill" href="">
+                        <i class="bi bi-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6">
+                <div class="service-item bg-light rounded d-flex flex-column align-items-center justify-content-center text-center">
+                    <div class="service-icon mb-4">
+                        <i class="fa fa-2x fa-calendar-check text-white"></i>
+                    </div>
+                    <h4 class="mb-3">Rendez-vous</h4>
+                    <p class="m-0">Prenez rendez-vous avec nos spécialistes en quelques clics.</p>
+                    <a class="btn btn-lg btn-primary rounded-pill" href="">
+                        <i class="bi bi-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6">
+                <div class="service-item bg-light rounded d-flex flex-column align-items-center justify-content-center text-center">
+                    <div class="service-icon mb-4">
+                        <i class="fa fa-2x fa-calendar-alt text-white"></i>
+                    </div>
+                    <h4 class="mb-3">Événements</h4>
+                    <p class="m-0">Participez à des événements et ateliers sur la santé mentale.</p>
+                    <a class="btn btn-lg btn-primary rounded-pill" href="">
+                        <i class="bi bi-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6">
+                <div class="service-item bg-light rounded d-flex flex-column align-items-center justify-content-center text-center">
+                    <div class="service-icon mb-4">
+                        <i class="fa fa-2x fa-prescription-bottle text-white"></i>
+                    </div>
+                    <h4 class="mb-3">Pharmacies et Médicaments</h4>
+                    <p class="m-0">Trouvez des pharmacies et informations sur les médicaments.</p>
+                    <a class="btn btn-lg btn-primary rounded-pill" href="">
+                        <i class="bi bi-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6">
+                <div class="service-item bg-light rounded d-flex flex-column align-items-center justify-content-center text-center">
+                    <div class="service-icon mb-4">
+                        <i class="fa fa-2x fa-newspaper text-white"></i>
+                    </div>
+                    <h4 class="mb-3">Blog</h4>
+                    <p class="m-0">Découvrez des articles et conseils sur la santé mentale.</p>
+                    <a class="btn btn-lg btn-primary rounded-pill" href="">
+                        <i class="bi bi-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Services End -->
+
+<!-- Rendez-vous Début -->
+<div class="container-fluid bg-primary my-5 py-5">
+    <div class="container py-5">
+        <div class="row gx-5">
+            <div class="col-lg-6 mb-5 mb-lg-0">
+                <div class="mb-4">
+                    <h5 class="d-inline-block text-white text-uppercase border-bottom border-5">Rendez-vous</h5>
+                    <h1 class="display-4">Prenez Rendez-vous Pour Votre Bien-être Mental</h1>
+                </div>
+                <p class="text-white mb-5">Prenez soin de votre santé mentale avec l'aide de nos experts. Nous offrons des séances adaptées à vos besoins, que vous soyez en période de stress, d'anxiété, ou que vous ayez besoin d'un soutien continu.</p>
+                
+                <a class="btn btn-outline-dark rounded-pill py-3 px-5" href="">En savoir plus</a>
+            </div>
+            <div class="col-lg-6">
+                <div class="bg-white text-center rounded p-5">
+                    <h1 class="mb-4">Réservez une Consultation</h1>
+                    <form>
+                        <div class="row g-3">
+                            <div class="col-12 col-sm-6">
+                                <select class="form-select bg-light border-0" style="height: 55px;">
+                                    <option selected>Choisir une Spécialité</option>
+                                    <option value="1">Thérapie Cognitive et Comportementale</option>
+                                    <option value="2">Thérapie de Couple</option>
+                                    <option value="3">Soutien Psychologique</option>
+                                </select>
+                            </div>
+                            <div class="col-12 col-sm-6">
+                                <select class="form-select bg-light border-0" style="height: 55px;">
+                                    <option selected>Choisir un Professionnel</option>
+                                    <option value="1">Psychologue 1</option>
+                                    <option value="2">Psychologue 2</option>
+                                    <option value="3">Psychologue 3</option>
+                                </select>
+                            </div>
+                            <div class="col-12 col-sm-6">
+                                <input type="text" class="form-control bg-light border-0" placeholder="Votre Nom" style="height: 55px;">
+                            </div>
+                            <div class="col-12 col-sm-6">
+                                <input type="email" class="form-control bg-light border-0" placeholder="Votre Email" style="height: 55px;">
+                            </div>
+                            <div class="col-12 col-sm-6">
+                                <div class="date" id="date" data-target-input="nearest">
+                                    <input type="text"
+                                        class="form-control bg-light border-0 datetimepicker-input"
+                                        placeholder="Date" data-target="#date" data-toggle="datetimepicker" style="height: 55px;">
+                                </div>
+                            </div>
+                            <div class="col-12 col-sm-6">
+                                <div class="time" id="time" data-target-input="nearest">
+                                    <input type="text"
+                                        class="form-control bg-light border-0 datetimepicker-input"
+                                        placeholder="Heure" data-target="#time" data-toggle="datetimepicker" style="height: 55px;">
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <button class="btn btn-primary w-100 py-3" type="submit">Prendre Rendez-vous</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Rendez-vous Fin -->
+
+
+
+    <!-- Testimonial Start -->
+    <div class="container-fluid py-5">
+        <div class="container">
+            <div class="text-center mx-auto mb-5" style="max-width: 500px;">
+                <h5 class="d-inline-block text-primary text-uppercase border-bottom border-5">Testimonial</h5>
+                <h1 class="display-4">Patients Say About Our Services</h1>
+            </div>
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <div class="owl-carousel testimonial-carousel">
+                        <div class="testimonial-item text-center">
+                            <div class="position-relative mb-5">
+                                <img class="img-fluid rounded-circle mx-auto" src={{asset("assets/img/testimonial-1.jpg")}} alt="">
+                                <div class="position-absolute top-100 start-50 translate-middle d-flex align-items-center justify-content-center bg-white rounded-circle" style="width: 60px; height: 60px;">
+                                    <i class="fa fa-quote-left fa-2x text-primary"></i>
+                                </div>
+                            </div>
+                            <p class="fs-4 fw-normal">Dolores sed duo clita tempor justo dolor et stet lorem kasd labore dolore lorem ipsum. At lorem lorem magna ut et, nonumy et labore et tempor diam tempor erat. Erat dolor rebum sit ipsum.</p>
+                            <hr class="w-25 mx-auto">
+                            <h3>Patient Name</h3>
+                            <h6 class="fw-normal text-primary mb-3">Profession</h6>
+                        </div>
+                        <div class="testimonial-item text-center">
+                            <div class="position-relative mb-5">
+                                <img class="img-fluid rounded-circle mx-auto" src={{asset("assets/img/testimonial-2.jpg")}} alt="">
+                                <div class="position-absolute top-100 start-50 translate-middle d-flex align-items-center justify-content-center bg-white rounded-circle" style="width: 60px; height: 60px;">
+                                    <i class="fa fa-quote-left fa-2x text-primary"></i>
+                                </div>
+                            </div>
+                            <p class="fs-4 fw-normal">Dolores sed duo clita tempor justo dolor et stet lorem kasd labore dolore lorem ipsum. At lorem lorem magna ut et, nonumy et labore et tempor diam tempor erat. Erat dolor rebum sit ipsum.</p>
+                            <hr class="w-25 mx-auto">
+                            <h3>Patient Name</h3>
+                            <h6 class="fw-normal text-primary mb-3">Profession</h6>
+                        </div>
+                        <div class="testimonial-item text-center">
+                            <div class="position-relative mb-5">
+                                <img class="img-fluid rounded-circle mx-auto" src={{asset("assets/img/testimonial-3.jpg")}} alt="">
+                                <div class="position-absolute top-100 start-50 translate-middle d-flex align-items-center justify-content-center bg-white rounded-circle" style="width: 60px; height: 60px;">
+                                    <i class="fa fa-quote-left fa-2x text-primary"></i>
+                                </div>
+                            </div>
+                            <p class="fs-4 fw-normal">Dolores sed duo clita tempor justo dolor et stet lorem kasd labore dolore lorem ipsum. At lorem lorem magna ut et, nonumy et labore et tempor diam tempor erat. Erat dolor rebum sit ipsum.</p>
+                            <hr class="w-25 mx-auto">
+                            <h3>Patient Name</h3>
+                            <h6 class="fw-normal text-primary mb-3">Profession</h6>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Testimonial End -->
+
+
+        <!-- Blog Start -->
+    <div class="container-fluid py-5">
+        <div class="container">
+            <div class="text-center mx-auto mb-5" style="max-width: 500px;">
+                <h5 class="d-inline-block text-primary text-uppercase border-bottom border-5">Our Blog</h5>
+                <h1 class="display-4">Latest Articles & News</h1>
+            </div>
+            <div class="row g-4">
+                <!-- Blog Post Card 1 -->
+                <div class="col-lg-4 col-md-6">
+                    <div class="blog-item shadow-sm">
+                        <div class="position-relative overflow-hidden">
+                            <img class="img-fluid" src="{{asset('assets/img/blog-1.jpg')}}" alt="">
+                            <div class="blog-overlay">
+                                <a class="btn btn-lg btn-primary rounded-pill" href="https://www.healthline.com/nutrition/16-ways-relieve-stress-anxiety#exercise" target="_blank">Read More</a>
+                            </div>
+                        </div>
+                        <div class="bg-light p-4">
+                            <div class="d-flex mb-3">
+                                <small class="me-3"><i class="far fa-user text-primary me-2"></i>Sarah Choi</small>
+                                <small><i class="far fa-calendar-alt text-primary me-2"></i>03 Feb, 2025</small>
+                            </div>
+                            <h5 class="mb-3">How to handle stress and anxiety</h5>
+                            <p class="mb-4">Learn effective techniques for managing daily stress and anxiety...</p>
+                            <a class="text-uppercase fw-bold" href="https://www.healthline.com/nutrition/16-ways-relieve-stress-anxiety#exercise" target="_blank">Read More <i class="bi bi-arrow-right"></i></a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Blog Post Card 2 -->
+                <div class="col-lg-4 col-md-6">
+                    <div class="blog-item shadow-sm">
+                        <div class="position-relative overflow-hidden">
+                            <img class="img-fluid" src="{{asset('assets/img/blog-2.jpg')}}" alt="">
+                            <div class="blog-overlay">
+                                <a class="btn btn-lg btn-primary rounded-pill" href="https://www.verywellmind.com/mindfulness-meditation-88369" target="_blank">Read More</a>
+                            </div>
+                        </div>
+                        <div class="bg-light p-4">
+                            <div class="d-flex mb-3">
+                                <small class="me-3"><i class="far fa-user text-primary me-2"></i>Kendra Cherry</small>
+                                <small><i class="far fa-calendar-alt text-primary me-2"></i>14 May, 2024</small>
+                            </div>
+                            <h5 class="mb-3">Mindfulness and meditation guide</h5>
+                            <p class="mb-4">Discover the power of mindfulness in your daily routine...</p>
+                            <a class="text-uppercase fw-bold" href="https://www.verywellmind.com/mindfulness-meditation-88369" target="_blank">Read More <i class="bi bi-arrow-right"></i></a>
+                        </div>
+                    </div>
+                </div>
+                
+
+                <!-- Blog Post Card 3 -->
+                <div class="col-lg-4 col-md-6">
+                    <div class="blog-item shadow-sm">
+                        <div class="position-relative overflow-hidden">
+                            <img class="img-fluid" src="{{asset('assets/img/blog-3.jpg')}}" alt="">
+                            <div class="blog-overlay">
+                                <a class="btn btn-lg btn-primary rounded-pill" href="https://www.helpguide.org/relationships/social-connection/relationship-help" target="_blank">Read More</a>
+                            </div>
+                        </div>
+                        <div class="bg-light p-4">
+                            <div class="d-flex mb-3">
+                                <small class="me-3"><i class="far fa-user text-primary me-2"></i> Lawrence Robinson, Melinda Smith, M.A. and Jeanne Segal</small>
+                                <small><i class="far fa-calendar-alt text-primary me-2"></i>20 oct, 2024</small>
+                            </div>
+                            <h5 class="mb-3">Building healthy relationships</h5>
+                            <p class="mb-4">Tips for maintaining strong and healthy relationships...</p>
+                            <a class="text-uppercase fw-bold" href="https://www.helpguide.org/relationships/social-connection/relationship-help" target="_blank">Read More <i class="bi bi-arrow-right"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Blog End -->
+
+    <style>
+        /* Blog post card styling */
+        .blog-item {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .blog-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
+        }
+        
+        .blog-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(19, 197, 221, 0.85);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .blog-item:hover .blog-overlay {
+            opacity: 1;
+        }
+
+        /* Modal styling */
+        #postModal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(8px);
+            z-index: 1000;
+            display: none;
+            overflow-y: auto;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal-content {
+            background: #ffffff;
+            width: 90%;
+            max-width: 800px;
+            margin: 40px auto;
+            border-radius: 16px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            position: relative;
+            padding: 2.5rem !important;
+            transform: scale(0.95);
+            transition: transform 0.3s ease;
+        }
+
+        #postModal.show .modal-content {
+            transform: scale(1);
+        }
+
+        /* Form styling */
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        #postForm label {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #1F2937;
+            margin-bottom: 0.75rem;
+            display: block;
+        }
+
+        #postForm input[type="text"],
+        #postForm textarea,
+        #postForm select {
+            width: 100%;
+            padding: 0.875rem 1.125rem;
+            border: 2px solid #E5E7EB;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background-color: #F9FAFB;
+        }
+
+        #postForm input[type="text"]:focus,
+        #postForm textarea:focus,
+        #postForm select:focus {
+            border-color: #13C5DD;
+            box-shadow: 0 0 0 4px rgba(19, 197, 221, 0.15);
+            outline: none;
+            background-color: #FFFFFF;
+        }
+
+        #postForm textarea {
+            min-height: 180px;
+            resize: vertical;
+        }
+
+        /* File upload styling */
+        #postForm input[type="file"] {
+            width: 100%;
+            padding: 1.25rem;
+            border: 2px dashed #13C5DD;
+            border-radius: 10px;
+            background: #F0FAFB;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        #postForm input[type="file"]:hover {
+            background: #E6F7F9;
+            border-color: #0FA3B8;
+        }
+
+        /* Submit button styling */
+        #postForm button[type="submit"] {
+            background: linear-gradient(135deg, #13C5DD 0%, #0FA3B8 100%);
+            color: white;
+            padding: 1.125rem 2.25rem;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 1.125rem;
+            transition: all 0.3s ease;
+            width: 100%;
+            margin-top: 1.5rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        #postForm button[type="submit"]:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(19, 197, 221, 0.4);
+        }
+
+        /* Message styling */
+        .success-message,
+        .error-message {
+            padding: 1rem 1.5rem;
+            border-radius: 10px;
+            margin-bottom: 1.5rem;
+            font-weight: 500;
+            display: none;
+            animation: slideIn 0.3s ease;
+        }
+
+        .success-message {
+            background-color: #DEF7EC;
+            color: #03543F;
+            border-left: 4px solid #059669;
+        }
+
+        .error-message {
+            background-color: #FDE8E8;
+            color: #9B1C1C;
+            border-left: 4px solid #DC2626;
+        }
+
+        /* Close button styling */
+        .close {
+            position: absolute;
+            right: 1.5rem;
+            top: 1.5rem;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.75rem;
+            color: #6B7280;
+            background: #F3F4F6;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .close:hover {
+            background-color: #E5E7EB;
+            color: #1F2937;
+            transform: rotate(90deg);
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateY(-10px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        /* Custom validation animations */
+    @keyframes slideDown {
+        from { opacity: 0; transform: translateY(-10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .form-group {
+        position: relative;
+        margin-bottom: 1.5rem;
+        transition: all 0.3s ease;
+    }
+
+    .validation-errors {
+        color: #3b82f6;
+        font-size: 0.875rem;
+        margin-top: 0.5rem;
+        animation: slideDown 0.3s ease-out;
+        display: none;
+    }
+
+    .validation-errors.active {
+        display: block;
+    }
+
+    .form-control.error {
+        border-color: #3b82f6;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25);
+    }
+
+    .success-message {
+        background: #dbeafe;
+        color: #1e40af;
+        border-left: 4px solid #3b82f6;
+        animation: slideDown 0.3s ease-out;
+    }
+
+    .error-message {
+        background: #fee2e2;
+        color: #dc2626;
+        border-left: 4px solid #ef4444;
+        animation: slideDown 0.3s ease-out;
+    }
+
+    .form-control:focus {
+        border-color: #93c5fd;
+        box-shadow: 0 0 0 3px rgba(147, 197, 253, 0.5);
+    }
+
+    @keyframes pulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.02); }
+        100% { transform: scale(1); }
+    }
+
+    .btn-primary {
+        background: #3b82f6;
+        transition: all 0.3s ease;
+    }
+
+    .btn-primary:hover {
+        background: #2563eb;
+        animation: pulse 1.5s infinite;
+    }
+    </style>
+    <style>
+    /* Floating button in the bottom right */
+    .floating-btn {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 50px;
+        padding: 15px 20px;
+        font-size: 16px;
+        cursor: pointer;
+        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+        transition: 0.3s;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+    .floating-btn:hover {
+        background-color: #0056b3;
+    }
+
+    /* Modal styling */
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.4);
+        justify-content: center;
+        align-items: center;
+    }
+
+    .modal-content {
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        width: 50%;
+        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
+        text-align: center;
+        position: relative;
+    }
+
+    .close {
+        position: absolute;
+        right: 20px;
+        top: 15px;
+        font-size: 25px;
+        cursor: pointer;
+    }
+
+    .close:hover {
+        color: red;
+    }
+
+    .form-group {
+        margin-bottom: 15px;
+        text-align: left;
+    }
+
+    .form-group label {
+        display: block;
+        font-weight: bold;
+        margin-bottom: 5px;
+    }
+
+    .form-group textarea {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        resize: none;
+    }
+
+    .submit-btn {
+        background-color: #007bff;
+        color: white;
+        border: none;
+        padding: 10px 15px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 16px;
+    }
+
+    .submit-btn:hover {
+        background-color: #0056b3;
+    }
+
+    #aiResponse {
+        margin-top: 20px;
+        font-weight: bold;
+        color: #333;
+    }
+</style>
+
+<style>
+    /* Floating button in the bottom right */
+    .floating-btn {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 50px;
+        padding: 15px 20px;
+        font-size: 16px;
+        cursor: pointer;
+        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+        transition: 0.3s;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+    .floating-btn:hover {
+        background-color: #0056b3;
+    }
+
+    /* Modal styling */
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.4);
+        justify-content: center;
+        align-items: center;
+    }
+
+    .modal-content {
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        width: 50%;
+        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
+        text-align: center;
+        position: relative;
+    }
+
+    .close {
+        position: absolute;
+        right: 20px;
+        top: 15px;
+        font-size: 25px;
+        cursor: pointer;
+    }
+
+    .close:hover {
+        color: red;
+    }
+
+    .form-group {
+        margin-bottom: 15px;
+        text-align: left;
+    }
+
+    .form-group label {
+        display: block;
+        font-weight: bold;
+        margin-bottom: 5px;
+    }
+
+    .form-group textarea {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        resize: none;
+    }
+
+    .submit-btn {
+        background-color: #007bff;
+        color: white;
+        border: none;
+        padding: 10px 15px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 16px;
+        transition: background 0.3s;
+    }
+
+    .submit-btn:hover {
+        background-color: #0056b3;
+    }
+
+    /* AI Response Styling */
+    .response-container {
+        display: none;
+        margin-top: 20px;
+        padding: 20px;
+        background: linear-gradient(135deg, #007bff, #00d4ff);
+        color: white;
+        font-size: 16px;
+        font-weight: 500;
+        border-radius: 10px;
+        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+        opacity: 0;
+        transform: translateY(10px);
+        transition: opacity 0.5s, transform 0.5s;
+    }
+
+    .response-container.show {
+        display: block;
+        opacity: 1;
+        transform: translateY(0);
+    }
+</style>
+
+<style>
+        /* Floating button in the bottom right */
+        .floating-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 15px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .floating-btn:hover {
+            background-color: #0056b3;
+        }
+
+        /* Modal styling */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.4);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            width: 50%;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            position: relative;
+        }
+
+        .close {
+            position: absolute;
+            right: 20px;
+            top: 15px;
+            font-size: 25px;
+            cursor: pointer;
+        }
+
+        .close:hover {
+            color: red;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            resize: none;
+        }
+
+        .submit-btn {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background 0.3s;
+        }
+
+        .submit-btn:hover {
+            background-color: #0056b3;
+        }
+
+        /* AI Response Styling */
+        .response-container {
+            display: none;
+            margin-top: 20px;
+            padding: 20px;
+            background: linear-gradient(135deg, #007bff, #00d4ff);
+            color: white;
+            font-size: 16px;
+            font-weight: 500;
+            border-radius: 10px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+            opacity: 0;
+            transform: translateY(10px);
+            transition: opacity 0.5s, transform 0.5s;
+            max-height: 200px;
+            overflow-y: auto;
+            text-align: left;
+        }
+
+        .response-container.show {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+    <!-- Floating Button for Mental Health Form -->
+    <button class="floating-btn" onclick="toggleModal()">
+        <i class="fas fa-comment-medical"></i> Mental Health Support
+    </button>
+
+    <!-- Modal for Mental Health Form -->
+    <div id="mentalHealthModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="toggleModal()">&times;</span>
+            <h2>Mental Health Support Form</h2>
+            <form onsubmit="submitForm(event)">
+                <div class="form-group">
+                    <label for="feelings">How do you feel?</label>
+                    <textarea id="feelings" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="interests">What are your interests?</label>
+                    <textarea id="interests" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="medical_history">Medical history</label>
+                    <textarea id="medical_history" required></textarea>
+                </div>
+                <button type="submit" class="submit-btn">Submit</button>
+            </form>
+            <!-- AI Response Section -->
+            <div id="responseContainer" class="response-container">
+                <h3>AI's Supportive Message 💙</h3>
+                <p id="aiResponse"></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function toggleModal() {
+            const modal = document.getElementById("mentalHealthModal");
+            modal.style.display = (modal.style.display === "flex") ? "none" : "flex";
+        }
+
+        async function submitForm(event) {
+            event.preventDefault();
+            
+            const feelings = document.getElementById("feelings").value;
+            const interests = document.getElementById("interests").value;
+            const medicalHistory = document.getElementById("medical_history").value;
+
+            try {
+                const response = await fetch("http://127.0.0.1:8040/process_mental_health", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ feelings, interests, medical_history: medicalHistory })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP Error! Status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                console.log("API Response:", data);
+
+                if (data && data.support_message) {
+                    document.getElementById("aiResponse").innerText = data.support_message;
+                    const responseContainer = document.getElementById("responseContainer");
+                    responseContainer.classList.add("show");
+                } else {
+                    document.getElementById("aiResponse").innerText = "⚠️ Unexpected response format.";
+                }
+
+            } catch (error) {
+                console.error("Fetch error:", error);
+                document.getElementById("aiResponse").innerText = "⚠️ Error fetching response.";
+            }
+        }
+    </script>
+</body>
+
+    <div class="container-fluid py-5">
+        <div class="container">
+            <div class="text-center mx-auto mb-5" style="max-width: 500px;">
+                <h5 class="d-inline-block text-primary text-uppercase border-bottom border-5">Blog Posts</h5>
+                <h1 class="display-4 mb-4">Share Your Story</h1>
+                <p class="text-muted">Join our community and share your thoughts, experiences, and insights with others.</p>
+            </div>
+
+            <div class="d-flex justify-content-center mb-5">
+                <button class="btn btn-primary rounded-pill px-5 py-3 shadow-lg" id="openPostModal">
+                    <i class="fas fa-plus-circle me-2"></i>Create New Post
+                </button>
+            </div>
+
+            <!-- Post Modal -->
+            <div id="postModal" class="modal">
+                <div class="modal-content">
+                    <span class="close" id="closePostModal">&times;</span>
+                    <h2 class="text-primary mb-4 text-center">Create a New Blog Post</h2>
+                    <div class="success-message" id="successMessage">
+                        <i class="fas fa-check-circle me-2"></i>Post created successfully!
+                    </div>
+                    
+                    <div class="error-message" id="errorMessage">
+                        <i class="fas fa-exclamation-circle me-2"></i>Please fix the errors below.
+                    </div>
+{{ form_start(postForm, {'attr': {'novalidate': 'novalidate'}}) }}
+    <div class="form-group">
+        {{ form_label(postForm.titre, 'Title', {'label_attr': {'class': 'form-label'}}) }}
+        {{ form_widget(postForm.titre, {
+            'attr': {
+                'class': 'form-control',
+                'placeholder': 'Enter your post title',
+                'required': 'required'
+            }
+        }) }}
+        {{ form_errors(postForm.titre, {'attr': {'class': 'text-danger'}}) }}
+    </div>
+
+    <div class="form-group">
+        {{ form_label(postForm.contenu, 'Content', {'label_attr': {'class': 'form-label'}}) }}
+        {{ form_widget(postForm.contenu, {
+            'attr': {
+                'class': 'form-control',
+                'placeholder': 'Write your post content here...',
+                'rows': '6',
+                'required': 'required'
+            }
+        }) }}
+        {{ form_errors(postForm.contenu, {'attr': {'class': 'text-danger'}}) }}
+    </div>
+
+    <div class="form-group">
+        {{ form_label(postForm.categorie, 'Category', {'label_attr': {'class': 'form-label'}}) }}
+        {{ form_widget(postForm.categorie, {
+            'attr': {
+                'class': 'form-select',
+                'required': 'required'
+            }
+        }) }}
+        {{ form_errors(postForm.categorie, {'attr': {'class': 'text-danger'}}) }}
+    </div>
+
+    <div class="alert alert-info">
+        <i class="fas fa-info-circle me-2"></i>
+        <strong>Image Upload Guidelines:</strong>
+        <ul class="mb-0 mt-2">
+            <li>Maximum file size: 2MB</li>
+            <li>Allowed formats: JPG, PNG, GIF</li>
+            <li>Recommended dimensions: 1200x800 pixels</li>
+        </ul>
+    </div>
+
+    <div class="form-group">
+        {{ form_label(postForm.image_post, 'Featured Image', {'label_attr': {'class': 'form-label'}}) }}
+        {{ form_widget(postForm.image_post, {
+            'attr': {
+                'class': 'form-control',
+                'required': 'required'
+            }
+        }) }}
+        {{ form_errors(postForm.image_post, {'attr': {'class': 'text-danger'}}) }}
+    </div>
+
+    <button type="submit" class="btn btn-primary">
+        <i class="fas fa-paper-plane me-2"></i>Publish Post
+    </button>
+{{ form_end(postForm) }}
+
+
+            </div>
+        </div>
+    </div>
+    <script>
+    document.addEventListener('DOMContentLoaded', function () {
+    const modal = document.getElementById('postModal');
+    const openBtn = document.getElementById('openPostModal');
+    const closeBtn = document.getElementById('closePostModal');
+    const form = document.querySelector('#postModal form');
+    const successMsg = document.getElementById('successMessage');
+    const errorMsg = document.getElementById('errorMessage');
+
+    function openModal() {
+        modal.style.display = 'block';
+        document.body.style.overflow = 'hidden';
+        setTimeout(() => modal.classList.add('show'), 10);
+    }
+
+    function closeModal() {
+        modal.classList.remove('show');
+        setTimeout(() => {
+            modal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }, 300);
+        successMsg.style.display = 'none';
+        errorMsg.style.display = 'none';
+    }
+
+    openBtn.addEventListener('click', openModal);
+    closeBtn.addEventListener('click', closeModal);
+
+    window.addEventListener('click', (e) => {
+        if (e.target === modal) closeModal();
+    });
+
+    form.addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        const formData = new FormData(form);
+
+        fetch('/home', {
+            method: 'POST',
+            body: formData,
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        })
+        .then(response => response.json()
+            .catch(() => { throw new Error("Invalid JSON Response") }) // ✅ Handle non-JSON errors
+        )
+        .then(data => {
+            console.log('Server Response:', data);
+
+            if (data.success) {
+                successMsg.style.display = 'block';
+                errorMsg.style.display = 'none';
+                setTimeout(() => {
+                    closeModal();
+                    form.reset();
+                    window.location.reload();
+                }, 2000);
+            } else {
+                errorMsg.style.display = 'block';
+                successMsg.style.display = 'none';
+                errorMsg.innerHTML = '<i class="fas fa-exclamation-circle me-2"></i>' + 
+                    (data.errors ? JSON.stringify(data.errors, null, 2) : data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            errorMsg.style.display = 'block';
+            errorMsg.innerHTML = '<i class="fas fa-exclamation-circle me-2"></i> An error occurred while submitting the form.';
+        });
+    });
+});
+
+
+    </script>
+    {% endblock %}
+    
+    {% block footer %}
+    <!-- Footer Start -->
+    <div class="container-fluid bg-dark text-light mt-5 py-5">
+        <div class="container py-5">
+            <div class="row g-5">
+                <div class="col-lg-3 col-md-6">
+                    <h4 class="d-inline-block text-primary text-uppercase border-bottom border-5 border-secondary mb-4">Get In Touch</h4>
+                    <p class="mb-4">No dolore ipsum accusam no lorem. Invidunt sed clita kasd clita et et dolor sed dolor</p>
+                    <p class="mb-2"><i class="fa fa-map-marker-alt text-primary me-3"></i>123 Street, New York, USA</p>
+                    <p class="mb-2"><i class="fa fa-envelope text-primary me-3"></i>info@example.com</p>
+                    <p class="mb-0"><i class="fa fa-phone-alt text-primary me-3"></i>+012 345 67890</p>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <h4 class="d-inline-block text-primary text-uppercase border-bottom border-5 border-secondary mb-4">Quick Links</h4>
+                    <div class="d-flex flex-column justify-content-start">
+                        <a class="text-light mb-2" href="#"><i class="fa fa-angle-right me-2"></i>Home</a>
+                        <a class="text-light mb-2" href="#"><i class="fa fa-angle-right me-2"></i>About Us</a>
+                        <a class="text-light mb-2" href="#"><i class="fa fa-angle-right me-2"></i>Our Services</a>
+                        <a class="text-light mb-2" href="#"><i class="fa fa-angle-right me-2"></i>Meet The Team</a>
+                        <a class="text-light mb-2" href="#"><i class="fa fa-angle-right me-2"></i>Latest Blog</a>
+                        <a class="text-light" href="#"><i class="fa fa-angle-right me-2"></i>Contact Us</a>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <h4 class="d-inline-block text-primary text-uppercase border-bottom border-5 border-secondary mb-4">Popular Links</h4>
+                    <div class="d-flex flex-column justify-content-start">
+                        <a class="text-light mb-2" href="#"><i class="fa fa-angle-right me-2"></i>Home</a>
+                        <a class="text-light mb-2" href="#"><i class="fa fa-angle-right me-2"></i>About Us</a>
+                        <a class="text-light mb-2" href="#"><i class="fa fa-angle-right me-2"></i>Our Services</a>
+                        <a class="text-light mb-2" href="#"><i class="fa fa-angle-right me-2"></i>Meet The Team</a>
+                        <a class="text-light mb-2" href="#"><i class="fa fa-angle-right me-2"></i>Latest Blog</a>
+                        <a class="text-light" href="#"><i class="fa fa-angle-right me-2"></i>Contact Us</a>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <h4 class="d-inline-block text-primary text-uppercase border-bottom border-5 border-secondary mb-4">Newsletter</h4>
+                    <form action="">
+                        <div class="input-group">
+                            <input type="text" class="form-control p-3 border-0" placeholder="Your Email Address">
+                            <button class="btn btn-primary">Sign Up</button>
+                        </div>
+                    </form>
+                    <h6 class="text-primary text-uppercase mt-4 mb-3">Follow Us</h6>
+                    <div class="d-flex">
+                        <a class="btn btn-lg btn-primary btn-lg-square rounded-circle me-2" href="#"><i class="fab fa-twitter"></i></a>
+                        <a class="btn btn-lg btn-primary btn-lg-square rounded-circle me-2" href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a class="btn btn-lg btn-primary btn-lg-square rounded-circle me-2" href="#"><i class="fab fa-linkedin-in"></i></a>
+                        <a class="btn btn-lg btn-primary btn-lg-square rounded-circle" href="#"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container-fluid bg-dark text-light border-top border-secondary py-4">
+        <div class="container">
+            <div class="row g-5">
+                <div class="col-md-6 text-center text-md-start">
+                    <p class="mb-md-0">&copy; <a class="text-primary" href="#">Your Site Name</a>. All Rights Reserved.</p>
+                </div>
+                <div class="col-md-6 text-center text-md-end">
+                    <p class="mb-0">Designed by <a class="text-primary" href="https://htmlcodex.com">HTML Codex</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Footer End -->
+    {% endblock %}
+
+
+    <!-- Back to Top -->
+    <a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top"><i class="bi bi-arrow-up"></i></a>
+
+    {% block javascripts %}
+    <!-- JavaScript Libraries -->
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src={{asset("assets/lib/easing/easing.min.js")}}></script>
+    <script src={{asset("assets/lib/waypoints/waypoints.min.js")}}></script>
+    <script src={{asset("assets/lib/owlcarousel/owl.carousel.min.js")}}></script>
+    <script src={{asset("assets/lib/tempusdominus/js/moment.min.js")}}></script>
+    <script src={{asset("assets/lib/tempusdominus/js/moment-timezone.min.js")}}></script>
+    <script src={{asset("assets/lib/tempusdominus/js/tempusdominus-bootstrap-4.min.js")}}></script>
+
+    <!-- Template Javascript -->
+    <script src={{asset("assets/js/main.js")}}></script>
+    {% endblock %}
+
+</body>
+
+</html>

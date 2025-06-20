@@ -1,0 +1,228 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Pharmacy List{% endblock %}
+
+{% block content %}
+    <h1>Pharmacy List</h1>
+
+    {% if pharmacies is empty %}
+        <p>No pharmacies found.</p>
+    {% else %}
+        <div class="pharmacy-container">
+            <div class="pharmacy-wrapper">
+                {% for pharmacie in pharmacies %}
+                    <div class="pharmacy-card" data-pharmacy-id="{{ pharmacie.id }}" data-url="{{ path('listmed', { pharmacieId: pharmacie.id }) }}">
+                        {% if pharmacie.logoBase64 %}
+                            <img src="data:image/png;base64,{{ pharmacie.logoBase64 }}" alt="{{ pharmacie.nom }} Logo" class="pharmacy-logo" 
+                                 onerror="this.onerror=null; this.src='/images/default-logo.png';">
+                        {% else %}
+                            <div class="no-logo">No Logo</div>
+                        {% endif %}
+                        <div class="pharmacy-info">
+                            <h2>{{ pharmacie.nom }}</h2>
+                            <p><strong>Address:</strong> {{ pharmacie.adresse }}</p>
+                            <p><strong>Email:</strong> {{ pharmacie.email }}</p>
+                            <p><strong>Phone:</strong> {{ pharmacie.tel }}</p>
+                            <p><strong>Type:</strong> {{ pharmacie.type }}</p>
+                            <p><strong>City:</strong> {{ pharmacie.ville }}</p>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    {% endif %}
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const pharmacyCards = document.querySelectorAll(".pharmacy-card");
+            let selectedCard = null;
+
+            pharmacyCards.forEach(card => {
+                card.addEventListener("mouseenter", () => {
+                    if (selectedCard !== card) {
+                        card.classList.add("selected");
+                    }
+                });
+
+                card.addEventListener("mouseleave", () => {
+                    if (selectedCard !== card) {
+                        card.classList.remove("selected");
+                    }
+                });
+
+                card.addEventListener("click", () => {
+                    if (selectedCard) {
+                        selectedCard.classList.remove("selected");
+                    }
+                    card.classList.add("selected");
+                    selectedCard = card;
+
+                    const url = card.getAttribute("data-url");
+                    window.location.href = url;
+                });
+            });
+        });
+    </script>
+
+    <!-- Chatbot Floating Button -->
+    <div id="chatbot-bubble">💬</div>
+
+    <!-- Chatbot Container -->
+    <div id="chatbot-container">
+        <div id="chatbot-header">
+            <span>Chatbot</span>
+            <button id="chatbot-close">✖</button>
+        </div>
+        <div id="chatbot-messages"></div>
+        <input type="text" id="chatbot-input" placeholder="Écrivez un message...">
+    </div>
+
+    <style>
+        /* Chatbot Floating Bubble */
+        #chatbot-bubble {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 55px;
+            height: 55px;
+            background-color: #007bff;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 24px;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        #chatbot-bubble:hover {
+            transform: scale(1.1);
+        }
+
+        /* Chatbot Container */
+        #chatbot-container {
+            position: fixed;
+            bottom: 80px;
+            right: 20px;
+            width: 350px;
+            height: 450px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+            display: none;
+            flex-direction: column;
+            overflow: hidden;
+            border: 1px solid #ccc;
+        }
+
+        /* Chatbot Header */
+        #chatbot-header {
+            background-color: #007bff;
+            color: white;
+            padding: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        #chatbot-close {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 18px;
+            cursor: pointer;
+        }
+
+        /* Chatbot Messages */
+        #chatbot-messages {
+            flex: 1;
+            padding: 12px;
+            overflow-y: auto;
+            font-size: 14px;
+            background: #f9f9f9;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        /* Chatbot Input */
+        #chatbot-input {
+            width: calc(100% - 24px);
+            margin: 10px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+            outline: none;
+        }
+    </style>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            console.log("Chatbot script loaded!");
+
+            const chatbotBubble = document.getElementById("chatbot-bubble");
+            const chatbotContainer = document.getElementById("chatbot-container");
+            const chatbotClose = document.getElementById("chatbot-close");
+            const chatbotInput = document.getElementById("chatbot-input");
+
+            if (!chatbotBubble || !chatbotContainer || !chatbotClose || !chatbotInput) {
+                console.error("Chatbot elements not found!");
+                return;
+            }
+
+            console.log("Chatbot elements found!");
+
+            function toggleChatbot() {
+                console.log("Chatbot bubble clicked!");
+                chatbotContainer.style.display = chatbotContainer.style.display === "none" || chatbotContainer.style.display === "" ? "flex" : "none";
+                if (chatbotContainer.style.display === "flex") {
+                    chatbotInput.focus();
+                }
+            }
+
+            function sendMessage(event) {
+                if (event.key === "Enter") {
+                    const message = chatbotInput.value.trim();
+                    if (message === "") return;
+
+                    addMessage("Vous", message);
+                    chatbotInput.value = "";
+
+                    fetch("http://127.0.0.1:5000/chatbot", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({ message: message })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        addMessage("Chatbot", data.response);
+                    })
+                    .catch(error => {
+                        addMessage("Chatbot", "Erreur de connexion avec le serveur.");
+                        console.error("Erreur API:", error);
+                    });
+                }
+            }
+
+            function addMessage(sender, text) {
+                const messagesContainer = document.getElementById("chatbot-messages");
+                const messageElement = document.createElement("div");
+                messageElement.innerHTML = `<strong>${sender}:</strong> ${text}`;
+                messagesContainer.appendChild(messageElement);
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            }
+
+            chatbotBubble.addEventListener("click", toggleChatbot);
+            chatbotClose.addEventListener("click", toggleChatbot);
+            chatbotInput.addEventListener("keypress", sendMessage);
+        });
+    </script>
+
+{% endblock %}

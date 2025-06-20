@@ -1,0 +1,85 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}My Planning{% endblock %}
+
+
+{% block content %}
+    <div class="container mt-4">
+        <h1 class="mb-4 text-center">My Planning</h1>
+
+    <div class="d-flex justify-content-end mb-3">
+        {% set doctorHasPlanning = false %}
+        
+        {% for planning in plannings %}
+            {% if planning.doctor.id == app.user.id %}
+                {% set doctorHasPlanning = true %}
+            {% endif %}
+        {% endfor %}
+
+        {% if not doctorHasPlanning %}
+            <a href="{{ path('planning_new') }}" class="btn btn-success">
+                <i class="fa fa-plus"></i> Create New Planning
+            </a>
+        {% endif %}
+    </div>
+
+
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover text-center">
+            <thead class="thead-dark">
+                <tr>
+                    <th>Availability Period</th>
+                    <th>Daily Working Hours</th>
+                    <th>Actions</th>
+                    <div id="calendar"></div>
+                </tr>
+            </thead>
+            <tbody>
+            {% for planning in plannings %}
+                <tr>
+                    <td>
+                        {% if planning.startDate %}
+                            {{ planning.startDate|date('Y-m-d') }}
+                        {% else %}
+                            <span class="badge bg-info text-white">Open</span>
+                        {% endif %}
+                        -
+                        {% if planning.endDate %}
+                            {{ planning.endDate|date('Y-m-d') }}
+                        {% else %}
+                            <span class="badge bg-info text-white">Open</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <span class="badge bg-primary p-2">
+                            {{ planning.dailyStartTime|date('H:i') }} - {{ planning.dailyEndTime|date('H:i') }}
+                        </span>
+                    </td>
+                    <td>
+                        <a href="{{ path('planning_show', {'id': planning.id}) }}" class="btn btn-info btn-sm">
+                            <i class="fa fa-eye"></i> Show
+                        </a>
+                        <a href="{{ path('planning_edit', {'id': planning.id}) }}" class="btn btn-warning btn-sm">
+                            <i class="fa fa-edit"></i> Edit
+                        </a>
+                        <form method="post" action="{{ path('planning_delete', {'id': planning.id}) }}" 
+                              onsubmit="return confirm('Are you sure?');" class="d-inline">
+                            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ planning.id) }}">
+                            <button type="submit" class="btn btn-danger btn-sm">
+                                <i class="fa fa-trash"></i> Delete
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="4" class="text-muted text-center">No planning found.</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+{% endblock %}
+
+

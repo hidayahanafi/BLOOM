@@ -1,0 +1,19 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Appointment Details{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card shadow-lg p-4">
+        <h1 class="mb-4">Appointment Details</h1>
+
+        <ul class="list-group mb-4">
+            <li class="list-group-item"><strong>ID:</strong> {{ appointment.id }}</li>
+            <li class="list-group-item"><strong>Doctor:</strong> {{ appointment.planning.doctor.name }}</li>
+            <li class="list-group-item"><strong>Date & Time:</strong> {{ appointment.startAt|date('Y-m-d H:i') }}</li>
+        </ul>
+
+        <a href="{{ path('appointment_index') }}" class="btn btn-secondary">Back to List</a>
+    </div>
+</div>
+{% endblock %}

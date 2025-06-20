@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | Your App Name</title>
+    <link rel="stylesheet" href="{{ asset('assets/css/registration.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+    <style>
+        .gradient-custom {
+            background: linear-gradient(to right, rgba(106, 17, 203, 1), rgba(37, 117, 252, 1));
+        }
+        /* Hide the video and canvas by default */
+        #faceLoginVideo, #faceLoginCanvas {
+            display: none;
+        }
+    </style>
+</head>
+<body class="vh-100 gradient-custom">
+    <div class="container py-5 h-100">
+        <div class="row d-flex justify-content-center align-items-center h-100">
+            <div class="col-12 col-md-8 col-lg-6 col-xl-5">
+                <div class="card bg-dark text-white" style="border-radius: 1rem;">
+                    <div class="card-body p-5 text-center">
+                        <div class="mb-md-5 mt-md-4 pb-5">
+                            <h2 class="fw-bold mb-2 text-uppercase">Login</h2>
+                            <p class="text-white-50 mb-5">Please enter your login and password!</p>
+
+                            {# Flash Messages #}
+                            {% for label, messages in app.flashes %}
+                                <div class="alert alert-{{ label }}">
+                                    {% for message in messages %}
+                                        <p>{{ message }}</p>
+                                    {% endfor %}
+                                </div>
+                            {% endfor %}
+
+                            {# Login Form #}
+                            <form method="post">
+                                {# Email Field #}
+                                <div class="form-floating mb-4">
+                                    <input type="email" value="{{ last_username }}" name="email" id="typeEmailX" class="form-control form-control-lg" required autofocus>
+                                    <label for="typeEmailX">Email</label>
+                                </div>
+
+                                {# Password Field #}
+                                <div class="form-floating mb-4">
+                                    <input type="password" name="password" id="typePasswordX" class="form-control form-control-lg" required>
+                                    <label for="typePasswordX">Password</label>
+                                </div>
+
+                                {# Remember Me #}
+                                <div class="form-check d-flex justify-content-start mb-4">
+                                    <input class="form-check-input" type="checkbox" name="_remember_me" id="rememberMe">
+                                    <label class="form-check-label ms-2" for="rememberMe"> Remember me </label>
+                                </div>
+
+                                {# CSRF Token #}
+                                <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+
+                                {# Submit Button #}
+                                <button class="btn btn-outline-light btn-lg px-5" type="submit">Login</button>
+                            </form>
+
+                            {# Or, login with Face Recognition #}
+                            <div class="mt-4">
+                                <button class="btn btn-outline-light btn-lg px-5" type="button" id="faceLoginButton">
+                                    <i class="fas fa-user-check"></i> Login with Face Recognition
+                                </button>
+                            </div>
+
+                            {# Forgot Password #}
+                            <p class="small mt-3"><a class="text-white-50" href="{{ path('forgot_password') }}">Forgot password?</a></p>
+                        </div>
+
+                        {# Social Media Login #}
+                        <div class="d-flex justify-content-center text-center mt-4 pt-1">
+                            <a href="" class="text-white"><i class="fab fa-facebook-f fa-lg me-3"></i></a>
+                            <a href="{{ path('connect_linkedin') }}" class="text-white"><i class="fab fa-linkedin fa-lg me-3"></i></a>
+                            <a href="{{ path('connect_google') }}" class="text-white"><i class="fab fa-google fa-lg"></i></a>
+                            <a href="{{ path('connect_github') }}" class="text-white"><i class="fab fa-github fa-lg mx-3"></i></a>
+                        </div>
+
+                        {# Register Link #}
+                        <div class="mt-3">
+                            <p class="mb-0">Don't have an account? <a href="{{ path('register') }}" class="text-white-50 fw-bold">Sign Up</a></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {# Face Login Modal #}
+    <div class="modal fade" id="faceLoginModal" tabindex="-1" aria-labelledby="faceLoginModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content bg-dark text-white">
+          <div class="modal-header">
+            <h5 class="modal-title" id="faceLoginModalLabel">Face Recognition Login</h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <video id="faceLoginVideo" width="100%" autoplay></video>
+            <canvas id="faceLoginCanvas" style="display:none;"></canvas>
+            <p id="faceLoginError" class="text-danger"></p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-primary" id="captureFaceLoginButton">Capture & Login</button>
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // Face Login Modal Elements
+        let faceLoginButton = document.getElementById("faceLoginButton");
+        let faceLoginModalEl = document.getElementById('faceLoginModal');
+        let faceLoginModal = new bootstrap.Modal(faceLoginModalEl);
+        let video = document.getElementById("faceLoginVideo");
+        let canvas = document.getElementById("faceLoginCanvas");
+        let errorParagraph = document.getElementById("faceLoginError");
+        let captureButton = document.getElementById("captureFaceLoginButton");
+        let stream;
+
+        // When the "Login with Face Recognition" button is clicked, show the modal
+        faceLoginButton.addEventListener("click", function(){
+            faceLoginModal.show();
+        });
+
+        // When the modal is shown, start the camera stream
+        faceLoginModalEl.addEventListener('shown.bs.modal', function () {
+            navigator.mediaDevices.getUserMedia({ video: true })
+            .then(function(s) {
+                stream = s;
+                video.style.display = "block";
+                video.srcObject = stream;
+                video.play();
+            })
+            .catch(function(err) {
+                errorParagraph.textContent = "Unable to access camera: " + err;
+            });
+        });
+
+        // Stop the camera stream when the modal is hidden
+        faceLoginModalEl.addEventListener('hidden.bs.modal', function () {
+            if(stream) {
+                stream.getTracks().forEach(track => track.stop());
+            }
+            video.style.display = "none";
+            errorParagraph.textContent = "";
+        });
+
+        // Capture the image and send it to the face login endpoint
+        captureButton.addEventListener('click', function() {
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            canvas.getContext('2d').drawImage(video, 0, 0);
+            canvas.toBlob(function(blob) {
+                let formData = new FormData();
+                formData.append("face_image", blob, "face.jpg");
+                fetch("{{ path('face_login') }}", {
+                    method: "POST",
+                    body: formData,
+                    credentials: "same-origin"
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if(data.success) {
+                        alert("Face recognized, logging in...");
+                        window.location.href = "{{ path('home') }}";
+                    } else {
+                        errorParagraph.textContent = data.error;
+                    }
+                })
+                .catch(err => {
+                    errorParagraph.textContent = "Error: " + err;
+                });
+            }, "image/jpeg");
+        });
+    });
+    </script>
+</body>
+</html>

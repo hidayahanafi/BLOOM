@@ -1,0 +1,82 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Book Appointment{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card shadow-lg p-4">
+        <h1 class="mb-4">Book Appointment</h1>
+
+        {% for label, messages in app.flashes %}
+            <div class="alert alert-{{ label == 'error' ? 'danger' : 'success' }} alert-dismissible fade show" role="alert">
+                {{ messages | first }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+
+        {{ form_start(form, { 'attr': { 'novalidate': 'novalidate' } }) }}  
+            <div class="form-group mb-3">
+                {{ form_label(form.appointmentDate, 'Appointment Date', {'label_attr': {'class': 'form-label'}}) }}
+                {{ form_widget(form.appointmentDate, {'attr': {'class': 'form-control'}}) }}
+                {{ form_errors(form.appointmentDate) }}
+            </div>
+
+            <div class="form-group mb-3">
+                {{ form_label(form.startAt, 'Time Slot', {'label_attr': {'class': 'form-label'}}) }}
+                {{ form_widget(form.startAt, {'attr': {'class': 'form-control'}}) }}
+                {{ form_errors(form.startAt) }}
+            </div>
+
+            <button type="submit" class="btn btn-success btn-lg">Book Appointment</button>
+        {{ form_end(form) }}
+    </div>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const appointmentDateInput = document.querySelector('#{{ form.appointmentDate.vars.id }}');
+    const timeSlotSelect = document.querySelector('#{{ form.startAt.vars.id }}');
+    const planningId = {{ planning.id|json_encode|raw }};
+
+    function updateTimeSlots(dateValue) {
+        let url = '{{ path("appointment_available_times", {"planningId": "__PLANNING_ID__"}) }}';
+        url = url.replace('__PLANNING_ID__', planningId) + '?date=' + dateValue;
+
+        fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                // Clear current options.
+                timeSlotSelect.innerHTML = '';
+
+                // Add placeholder.
+                const placeholderOption = document.createElement('option');
+                placeholderOption.value = '';
+                placeholderOption.text = 'Select a time slot';
+                timeSlotSelect.appendChild(placeholderOption);
+
+                // Populate with available slots.
+                for (const [display, time] of Object.entries(data)) {
+                    const option = document.createElement('option');
+                    option.value = time; // e.g., "08:00:00"
+                    option.text = display; // e.g., "08:00"
+                    timeSlotSelect.appendChild(option);
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching time slots:', error);
+            });
+    }
+
+    appointmentDateInput.addEventListener('change', function() {
+        if (this.value) {
+            updateTimeSlots(this.value);
+        }
+    });
+
+    // Trigger update if a date is pre-selected.
+    if (appointmentDateInput.value) {
+        updateTimeSlots(appointmentDateInput.value);
+    }
+});
+</script>
+{% endblock %}

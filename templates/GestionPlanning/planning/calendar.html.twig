@@ -1,0 +1,36 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Doctor's Calendar{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="mb-4 text-center">Doctor's Calendar</h1>
+
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover text-center">
+            <thead class="thead-dark">
+                <tr>
+                    <th>Availability Period</th>
+                    <th>Daily Working Hours</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for calendar in calendars %}
+                <tr>
+                    <td>
+                        {{ calendar.startDate|date('Y-m-d') }} - {{ calendar.endDate|date('Y-m-d') }}
+                    </td>
+                    <td>
+                        {{ calendar.dailyStartTime|date('H:i') }} - {{ calendar.dailyEndTime|date('H:i') }}
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="2" class="text-muted text-center">No calendars found.</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

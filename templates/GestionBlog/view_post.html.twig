@@ -1,0 +1,48 @@
+<div class="container-fluid py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 mx-auto">
+                <div class="blog-post bg-light p-5 rounded shadow">
+                    {% if post.image is defined and post.image %}
+                        <img src="{{ asset('uploads/posts/' ~ post.image) }}" alt="{{ post.titre }}" class="img-fluid rounded mb-4">
+                    {% endif %}
+
+                    <h1 class="text-primary mb-4">{{ post.titre }}</h1>
+
+                    <div class="meta-info mb-4">
+                        <span class="me-3"><i class="far fa-user text-primary me-2"></i>{{ post.auteur }}</span>
+                        <span class="me-3"><i class="far fa-calendar-alt text-primary me-2"></i>{{ post.datePublication|date('d M, Y') }}</span>
+                        <span class="me-3"><i class="far fa-eye text-primary me-2"></i>{{ post.nbreVues }} views</span>
+                        <span><i class="far fa-comment text-primary me-2"></i>{{ post.nbreComments }} comments</span>
+                    </div>
+
+                    <div class="category mb-4">
+                        <span class="badge bg-primary">{{ post.categorie }}</span>
+                    </div>
+
+                    <div class="content">
+                        {{ post.contenu|raw }}
+                    </div>
+
+                    <div class="mt-5 d-flex justify-content-between">
+                        <a href="{{ path('app_blog') }}" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left me-2"></i>Back to Blog
+                        </a>
+                        
+                        {% if app.user and app.user.username == post.auteur %}
+                            <div>
+                                <a href="{{ path('edit_post', {'id': post.id}) }}" class="btn btn-primary me-2">
+                                    <i class="fas fa-edit me-2"></i>Edit
+                                </a>
+                                <a href="{{ path('delete_post', {'id': post.id}) }}" class="btn btn-danger" 
+                                   onclick="return confirm('Are you sure you want to delete this post?')">
+                                    <i class="fas fa-trash me-2"></i>Delete
+                                </a>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

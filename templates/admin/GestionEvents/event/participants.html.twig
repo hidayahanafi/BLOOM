@@ -1,0 +1,45 @@
+{% extends 'admin/layout.html.twig' %}
+
+{% block content %}
+    <div class="container mt-10">
+        <h1 class="text-center">Liste des Participants - {{ event.titre }}</h1>
+
+        {% if participants is empty %}
+            <p class="text-center">Aucun participant inscrit pour le moment.</p>
+        {% else %}
+            <div class="table-responsive">
+                <table class="table table-bordered table-striped">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th>#</th>
+                            <th>Nom</th>
+                            <th>Téléphone</th>
+                            <th>Email</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for user in participants %}
+                            <tr>
+                                <td>{{ loop.index }}</td>
+                                <td>{{ user.name }}</td>
+                                <td>{{ user.phoneNumber ?: 'Non renseigné' }}</td>
+                                <td>{{ user.email }}</td>
+                                <td>
+                                    <form action="{{ path('remove_participant', {'eventId': event.id, 'userId': user.id}) }}" method="post" onsubmit="return confirm('Voulez-vous vraiment supprimer ce participant ?');">
+                                        <input type="hidden" name="_token" value="{{ csrf_token('remove' ~ user.id) }}">
+                                        <button type="submit" class="btn btn-danger btn-sm">Supprimer</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% endif %}
+
+        <div class="text-center mt-4">
+            <a href="{{ path('list') }}" class="btn btn-primary">Retour à la liste des événements</a>
+        </div>
+    </div>
+{% endblock %}

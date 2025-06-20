@@ -1,0 +1,60 @@
+{% extends 'admin/layout.html.twig' %}
+
+{% block title %}Liste des médicaments - {{ pharmacie.nom }}{% endblock %}
+{% block content %}
+    <h1>Liste des médicaments pour la pharmacie : {{ pharmacie.nom }}</h1>
+
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Image</th>
+                    <th>Nom</th>
+                    <th>Description</th>
+                    <th>Dosage</th>
+                    <th>Catégorie</th>
+                    <th>Quantité</th>
+                    <th>Prix</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for medicament in medicaments %}
+                    <tr>
+                        <td>
+                            {% if medicament.base64Image is defined and medicament.base64Image is not empty %}
+                                <img src="{{ medicament.base64Image }}" alt="Image du médicament">
+                            {% else %}
+                                <div class="no-image">Pas d'image</div>
+                            {% endif %}
+                        </td>
+                        <td>{{ medicament.nom }}</td>
+                        <td>{{ medicament.description }}</td>
+                        <td>{{ medicament.dosage }}</td>
+                        <td>{{ medicament.categorie }}</td>
+                        <td>{{ medicament.quantite }}</td>
+                        <td>{{ medicament.prix }} €</td>
+                        <td>
+                            <a href="{{ path('editmed', {id: medicament.id}) }}" class="btn btn-primary">Modifier</a>
+                            <form action="{{ path('deletemed', { id: medicament.id }) }}" method="POST" 
+                                  onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce médicament ?');">
+                                <input type="hidden" name="_method" value="POST">
+                                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ medicament.id) }}">
+                                <button type="submit" class="btn btn-danger">Supprimer</button>
+                            </form>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="8" class="text-center">Aucun médicament trouvé pour cette pharmacie.</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="nav-buttons">
+        <a href="{{ path('addmed', { pharmacieId: pharmacie.id }) }}" class="btn btn-primary">Ajouter un Médicament</a>
+        <a href="{{ path('listph') }}" class="btn btn-primary">Retour à la liste des pharmacies</a>
+    </div>
+{% endblock %}

@@ -1,0 +1,77 @@
+{% extends '/admin/dashboard.html.twig' %}
+{% block content %}
+
+<div class="container-fluid bg-primary my-5 py-5">
+    <div class="container py-5">
+        <div class="row gx-5">
+            <div class="col-lg-6 mb-5 mb-lg-0">
+                <div class="mb-4">
+                    <h5 class="d-inline-block text-white text-uppercase border-bottom border-5">cour</h5>
+                    <h1 class="display-4">ajouter un cour</h1>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="bg-white text-center rounded p-5">
+                    <h1 class="mb-4">ajouter un cour</h1>
+                    <form action="{{ path('app_cour_add') }}" method="POST">
+                        {{ form_start(form, {'attr': { 'novalidate': 'novalidate'}}) }}
+                        <div class="row g-3">
+                            <!-- Nom du patient -->
+                            <div class="col-12 col-sm-6">
+                                {{ form_row(form.titre, {'attr': {'class': 'form-control bg-light border-0', 'style': 'height: 55px;'}}) }}
+                                {% for error in form.titre.vars.errors %}
+                                    <div class="invalid-feedback d-block">{{ error.message }}</div>
+                                {% endfor %}
+                            </div>
+                            
+                            
+                            <div class="col-12 col-sm-6">
+                                {{ form_row(form.description, {'attr': {'class': 'form-control bg-light border-0', 'style': 'height: 55px;'}}) }}
+                                {% for error in form.description.vars.errors %}
+                                    <div class="invalid-feedback d-block">{{ error.message }}</div>
+                                {% endfor %}
+                            </div>
+
+                            <!-- Lieu -->
+                            <div class="col-12 col-sm-6">
+                                {{ form_row(form.prix, {'attr': {'class': 'form-control bg-light border-0 datetimepicker-input', 'style': 'height: 55px;'}}) }}
+                                {% for error in form.prix.vars.errors %}
+                                    <div class="invalid-feedback d-block">{{ error.message }}</div>
+                                {% endfor %}
+                            </div>
+                            
+                            <!-- Date -->
+                            <div class="col-12 col-sm-6">
+                                {{ form_row(form.type, {'attr': {'class': 'form-control bg-light border-0 datetimepicker-input', 'style': 'height: 55px;'}}) }}
+                                {% for error in form.type.vars.errors %}
+                                    <div class="invalid-feedback d-block">{{ error.message }}</div>
+                                {% endfor %}
+                            </div>
+
+                            <!-- Heure -->
+                            <div class="col-12 col-sm-6">
+                                {{ form_row(form.Event, {'attr': {'class': 'form-control bg-light border-0 datetimepicker-input', 'style': 'height: 55px;'}}) }}
+                                {% for error in form.Event.vars.errors %}
+                                    <div class="invalid-feedback d-block">{{ error.message }}</div>
+                                {% endfor %}
+                            </div>                               
+
+                            <!-- Type -->
+                            <div class="col-12 col-sm-6">
+                                {{ form_row(form.img, {'attr': {'class': 'form-select bg-light border-0', 'style': 'height: 55px;'}}) }}
+                                {% for error in form.img.vars.errors %}
+                                    <div class="invalid-feedback d-block">{{ error.message }}</div>
+                                {% endfor %}
+                            </div>
+                            <div class="col-12">
+                                <button type="submit" class="btn btn-primary">ajouter cour</button>
+                            </div>
+                        </div>
+                        {{ form_end(form) }}
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

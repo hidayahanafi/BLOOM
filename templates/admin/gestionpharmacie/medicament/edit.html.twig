@@ -1,0 +1,47 @@
+{% extends 'admin/layout.html.twig' %}
+
+{% block title %}Modifier un Médicament{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <h1>Modifier le Médicament : {{ medicament.nom }}</h1>
+
+        {{ form_start(form, { 'attr': {'enctype': 'multipart/form-data', 'novalidate': 'novalidate', 'class': 'medicament-form'} }) }}
+            <div class="form-group">
+                {{ form_row(form.nom, { 'attr': {'class': 'form-control'} }) }}
+            </div>
+            <div class="form-group">
+                {{ form_row(form.description, { 'attr': {'class': 'form-control'} }) }}
+            </div>
+            <div class="form-group">
+                {{ form_row(form.dosage, { 'attr': {'class': 'form-control'} }) }}
+            </div>
+            <div class="form-group">
+                {{ form_row(form.categorie, { 'attr': {'class': 'form-control'} }) }}
+            </div>
+            <div class="form-group">
+                {{ form_row(form.quantite, { 'attr': {'class': 'form-control'} }) }}
+            </div>
+            <div class="form-group">
+                {{ form_row(form.prix, { 'attr': {'class': 'form-control'} }) }}
+            </div>
+            <div class="form-group">
+                {{ form_row(form.imageurl, { 'attr': {'class': 'form-control-file'} }) }}
+            </div>
+
+            {# Affichage de l’image actuelle si elle existe #}
+            {% if imageBase64 %}
+                <div class="current-image mb-4">
+                    <p><strong>Image actuelle :</strong></p>
+                    <img src="data:image/png;base64,{{ imageBase64 }}" alt="{{ medicament.nom }}" class="img-thumbnail" style="max-width: 200px;">
+                </div>
+            {% else %}
+                <p class="text-muted">Aucune image actuelle.</p>
+            {% endif %}
+
+            <button type="submit" class="btn btn-primary">Enregistrer les modifications</button>
+        {{ form_end(form) }}
+
+        <a href="{{ path('listmedback', { pharmacieId: medicament.idPharmacie.first.id }) }}" class="btn btn-secondary mt-3">Retour à la liste</a>
+    </div>
+{% endblock %}

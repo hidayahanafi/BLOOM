@@ -1,0 +1,112 @@
+{% extends 'admin/layout.html.twig' %}
+
+{% block stylesheets %}
+<style>
+    /* Style général pour la recherche */
+    #search-input {
+        margin-bottom: 20px;
+        padding: 8px;
+        font-size: 14px;
+        width: 100%;
+        max-width: 300px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Dashboard Start -->
+<div class="container-fluid py-5">
+    <div class="container">
+        <!-- Titre -->
+        <div class="text-center mx-auto mb-5" style="max-width: 700px;">
+            <h5 class="d-inline-block text-primary text-uppercase border-bottom border-5">Tableau de Bord des Récompenses</h5>
+            <h1 class="display-4">Liste des Récompenses Associées</h1>
+        </div>
+
+        <!-- Champ de recherche -->
+        <div class="d-flex justify-content-start mb-4">
+            <input type="text" id="search-input" class="form-control" placeholder="Rechercher par nom...">
+        </div>
+
+        <!-- Bouton Ajouter Récompense aligné à droite avec un style personnalisé -->
+        <div class="d-flex justify-content-end mb-4">
+            <a href="{{ path('app_recompense_new') }}" class="btn btn-success" style="width: 200px; font-size: 16px;">Ajouter Récompense</a>
+        </div>
+
+        <!-- Tableau des Récompenses -->
+        <table class="table table-bordered table-striped table-hover">
+            <thead>
+                <tr>
+                    <th scope="col">Nom</th>
+                    <th scope="col">Description</th>
+                    <th scope="col">Coût</th>
+                    <th scope="col">État</th>
+                    <th scope="col">Image</th>
+                    <th scope="col">ID Objectif</th>
+                    <th scope="col">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for recompense in recompenses %}
+                    <tr>
+                        <td>{{ recompense.nom }}</td>
+                        <td>{{ recompense.description }}</td>
+                        <td>{{ recompense.cout }}</td>
+                        <td>{{ recompense.etat }}</td>
+                        <td>
+                            {% if recompense.img %}
+                               <img src="{{ asset(recompense.img) }}" alt="Image de la récompense" style="width: 80px; height: 80px; object-fit: cover; border-radius: 2px;">
+                            {% else %}
+                                Aucune image
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if recompense.objectif %}
+                                {{ recompense.objectif.id }} <!-- Affichage de l'ID de l'objectif -->
+                            {% else %}
+                                Aucun objectif
+                            {% endif %}
+                        </td>
+                        <td>
+                        
+                            <a href="{{ path('app_recompense_edit', {'id': recompense.id}) }}" class="btn btn-warning" style="width: 100%;">Modifier</a>
+                            <a href="{{ path('app_recompense_delete', {'id': recompense.id}) }}" class="btn btn-danger" style="width: 100%;" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette récompense ?')">Supprimer</a>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="7" class="text-center">Aucune récompense trouvée</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+<!-- Dashboard End -->
+
+{% block javascripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const searchInput = document.getElementById('search-input');
+        const rows = document.querySelectorAll('table tbody tr');
+        
+        // Fonction de filtrage
+        searchInput.addEventListener('input', function() {
+            const query = searchInput.value.toLowerCase();
+            
+            // Parcourir chaque ligne du tableau
+            rows.forEach(function(row) {
+                const nomCell = row.querySelector('td:nth-child(1)');
+                
+                // Vérifier si le nom contient la chaîne de recherche
+                if (nomCell && nomCell.textContent.toLowerCase().includes(query)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}
+{% endblock %}

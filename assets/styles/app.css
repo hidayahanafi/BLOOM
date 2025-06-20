@@ -1,0 +1,38 @@
+/* assets/styles/app.css */
+@import '~@fullcalendar/core/main.css';
+@import '~@fullcalendar/daygrid/main.css';
+@import '~@fullcalendar/timegrid/main.css';
+
+/* Example CSS customization */
+#calendar {
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  .fc-daygrid-day-number {
+    color: #2c3e50;
+    font-weight: bold;
+  }
+  
+  .fc-daygrid-day {
+    border: 1px solid #ecf0f1;
+  }
+  
+  .fc-toolbar-title {
+    font-size: 24px;
+    color: #2980b9;
+  }
+  /* Use these CSS variables for color theming */
+:root {
+    --primary-color: #2980b9;
+    --secondary-color: #ecf0f1;
+    --background-color: #f9f9f9;
+  }
+  
+  #calendar {
+    background-color: var(--background-color);
+    color: var(--primary-color);
+  }
+  
+  

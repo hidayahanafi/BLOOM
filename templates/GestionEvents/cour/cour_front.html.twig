@@ -1,0 +1,31 @@
+{% extends 'base.html.twig' %}
+{% block content %}
+
+<!-- Pricing Plan Start -->
+<div class="container-fluid py-5">
+    <div class="container">
+        <div class="text-center mx-auto mb-5" style="max-width: 700px;">
+            <h5 class="d-inline-block text-primary text-uppercase border-bottom border-5">cours</h5>
+            <h1 class="display-4">Découvrez nos cours</h1>
+        </div>
+        <div class="row">
+            {% for cour in cours %}
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="bg-light rounded text-center p-4">
+                        <h2 class="text-primary">{{ cour.titre }}</h2>
+                        <p><strong>Description:</strong> {{ cour.description }}</p>
+                      
+                        <p><strong>Type:</strong> {{ cour.type }}</p>
+                        <img src="{{ asset('images/' ~ cour.img) }}"  class="img-fluid">
+                    </div>
+                </div>
+            {% else %}
+                <p class="text-center">Aucun cour disponible pour le moment.</p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+<!-- Pricing Plan End -->
+
+    {% endblock %}
+

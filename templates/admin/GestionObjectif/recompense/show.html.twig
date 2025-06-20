@@ -1,0 +1,50 @@
+{% extends 'admin/layout.html.twig' %}
+
+{% block title %}Détails de la récompense{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+          
+        </div>
+        <div class="card-body">
+            <div class="row mb-3">
+                <div class="col-4 text-end"><strong>Nom :</strong></div>
+                <div class="col-8">{{ recompense.nom }}</div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-4 text-end"><strong>Description :</strong></div>
+                <div class="col-8">{{ recompense.description }}</div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-4 text-end"><strong>Coût :</strong></div>
+                <div class="col-8">{{ recompense.cout }}</div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-4 text-end"><strong>État :</strong></div>
+                <div class="col-8">{{ recompense.etat }}</div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-4 text-end"><strong>Nom de l'objectif associé :</strong></div>
+                <div class="col-8">
+                    {% if recompense.objectif %}
+                        <span class="badge bg-success">{{ recompense.objectif.nom }}</span>
+                    {% else %}
+                        <span class="badge bg-secondary">Aucun objectif associé</span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="card-footer text-center">
+            <a href="{{ path('app_recompense_edit', {'id': recompense.id}) }}" class="btn btn-warning me-2">
+                Modifier
+            </a>
+            <a href="{{ path('app_recompense_delete', {'id': recompense.id}) }}" class="btn btn-danger"
+               onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette récompense ?')">
+                Supprimer
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}
